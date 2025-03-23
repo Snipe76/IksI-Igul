@@ -38,6 +38,11 @@ function checkWinner() {
             playingGame = false;
         }
     }
+
+    if (playerTurn === 9 && playingGame) {
+        alert('It\'s a tie!');
+        playingGame = false;
+    }
 }
 
 function resetGame() {
