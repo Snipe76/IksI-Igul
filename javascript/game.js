@@ -1,12 +1,17 @@
+// Game state variables
 let playingGame = true;
 let playerTurn = 0;
 const player1 = 'X';
 const player2 = 'O';
 
+// Get references to the buttons and instructions
 const buttons = Array.from(document.querySelectorAll('.grid-button'));
 const instructions = document.getElementById('instructions');
+
+// Add event listeners to the buttons
 buttons.forEach(button => button.addEventListener('click', playerClick));
 
+// Function to handle button clicks
 function playerClick(event) {
     if (!playingGame) return;
 
@@ -27,6 +32,7 @@ function playerClick(event) {
     checkWinner();
 }
 
+// Function to check for a winner
 function checkWinner() {
     const winningCombos = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
@@ -54,6 +60,7 @@ function checkWinner() {
     }
 }
 
+// Function to determine the direction of the winning line
 function getDirection(a, b, c) {
     if (a % 3 === b % 3 && b % 3 === c % 3) {
         return 'vertical';
@@ -66,6 +73,7 @@ function getDirection(a, b, c) {
     }
 }
 
+// Function to reset the game
 function resetGame() {
     buttons.forEach(button => {
         button.innerHTML = '';
