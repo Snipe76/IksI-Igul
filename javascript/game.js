@@ -4,10 +4,46 @@ let playerTurn = 0;
 const player1 = 'X';
 const player2 = 'O';
 
-// Get references to the buttons and instructions
-const buttons = Array.from(document.querySelectorAll('.grid-button'));
-const instructions = document.getElementById('instructions');
-const winLine = document.getElementById('win-line');
+// Game elements
+let buttons;
+let instructions;
+let winLine;
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', initializeGame);
+
+function initializeGame() {
+    // Get references to the buttons and instructions
+    buttons = Array.from(document.querySelectorAll('.grid-button'));
+    instructions = document.getElementById('instructions');
+    winLine = document.getElementById('win-line');
+    const resetButton = document.getElementById('reset');
+
+    // Add event listeners
+    buttons.forEach(button => {
+        button.addEventListener('click', playerClick);
+        button.addEventListener('touchstart', handleTouchStart, { passive: true });
+    });
+
+    // Prevent double-tap zoom on mobile
+    document.addEventListener('touchend', preventZoom);
+}
+
+// Touch event handlers
+function handleTouchStart(event) {
+    // Prevent any default touch behaviors
+    event.preventDefault();
+
+    // Trigger click event
+    event.target.click();
+}
+
+function preventZoom(event) {
+    // Prevent double-tap zoom
+    if (event.cancelable) {
+        event.preventDefault();
+    }
+}
 
 // Function to trigger confetti
 function celebrateWin(winnerClass) {
@@ -27,47 +63,48 @@ function celebrateWin(winnerClass) {
         colors: colors
     };
 
-    // Single burst for mobile, three bursts for desktop
-    if (isMobile) {
-        // Center burst for mobile
-        confetti({
-            ...config,
-            origin: { x: 0.5, y: 0.6 }
-        });
-    } else {
-        let burstCount = 0;
-        const maxBursts = 2;
-        const burstInterval = 300; // Time between bursts in ms
+    try {
+        // Single burst for mobile, three bursts for desktop
+        if (isMobile) {
+            // Center burst for mobile
+            confetti({
+                ...config,
+                origin: { x: 0.5, y: 0.6 }
+            });
+        } else {
+            let burstCount = 0;
+            const maxBursts = 2;
+            const burstInterval = 300; // Time between bursts in ms
 
-        const fireBurst = () => {
-            if (burstCount < maxBursts) {
-                // Left side burst
-                confetti({
-                    ...config,
-                    angle: 60,
-                    origin: { x: 0, y: 0.7 }
-                });
-
-                // Right side burst
-                confetti({
-                    ...config,
-                    angle: 120,
-                    origin: { x: 1, y: 0.7 }
-                });
-
-                burstCount++;
+            const fireBurst = () => {
                 if (burstCount < maxBursts) {
-                    setTimeout(fireBurst, burstInterval);
-                }
-            }
-        };
+                    // Left side burst
+                    confetti({
+                        ...config,
+                        angle: 60,
+                        origin: { x: 0, y: 0.7 }
+                    });
 
-        fireBurst();
+                    // Right side burst
+                    confetti({
+                        ...config,
+                        angle: 120,
+                        origin: { x: 1, y: 0.7 }
+                    });
+
+                    burstCount++;
+                    if (burstCount < maxBursts) {
+                        setTimeout(fireBurst, burstInterval);
+                    }
+                }
+            };
+
+            fireBurst();
+        }
+    } catch (error) {
+        console.error('Confetti error:', error);
     }
 }
-
-// Add event listeners to the buttons
-buttons.forEach(button => button.addEventListener('click', playerClick));
 
 // Function to handle button clicks
 function playerClick(event) {

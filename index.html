@@ -4,11 +4,10 @@
 <head>
     <!-- Meta tags and title -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script async src="javascript/game.js"></script>
-    <script async src="javascript/version.js"></script>
     <title>Tic Tac Toe</title>
 </head>
 
@@ -37,6 +36,11 @@
         <p>Created by Evgeniy Gutman</p>
         <p>Version: <span id="version">1.0.0</span></p>
     </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="javascript/game.js"></script>
+    <script src="javascript/version.js"></script>
 </body>
 
 </html>

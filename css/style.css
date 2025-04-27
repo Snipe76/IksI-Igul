@@ -90,9 +90,12 @@ h2 {
     min-height: 0;
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, background-color, box-shadow;
 }
 
-.grid-button:hover:not(:disabled) {
+.grid-button:hover:not(:disabled),
+.grid-button:active:not(:disabled) {
     background: #444444;
     transform: scale(1.02);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
@@ -116,19 +119,9 @@ h2 {
     line-height: 1;
     width: auto;
     height: auto;
+    -webkit-animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
+    will-change: transform, opacity;
 }
 
 /* Reset button styles */
@@ -145,9 +138,12 @@ h2 {
     touch-action: manipulation;
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, background-color, box-shadow;
 }
 
-#reset:hover {
+#reset:hover,
+#reset:active {
     background: #444444;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -254,7 +250,51 @@ footer:hover {
 .winner {
     background: #2ecc71 !important;
     border-color: #27ae60 !important;
+    -webkit-animation: winPulse 1s ease infinite;
     animation: winPulse 1s ease infinite;
+    will-change: transform, box-shadow;
+}
+
+/* Animations */
+@-webkit-keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@-webkit-keyframes winPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(46, 204, 113, 0.4);
+    }
+
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(46, 204, 113, 0.4);
+    }
 }
 
 @keyframes winPulse {
@@ -287,6 +327,16 @@ footer:hover {
 
     .grid-button {
         border-width: 1px;
+    }
+
+    /* Optimize animations for mobile */
+    .grid-button:active:not(:disabled) {
+        transform: scale(0.95);
+        transition: all 0.1s ease;
+    }
+
+    .winner {
+        animation: winPulse 1.2s ease infinite;
     }
 }
 
