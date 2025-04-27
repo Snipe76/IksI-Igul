@@ -7,11 +7,20 @@ A modern, responsive implementation of the classic Tic Tac Toe game built with H
 ## Features
 
 - 🎮 Clean and modern user interface
-- 📱 Fully responsive design - works on desktop and mobile devices
+- 📱 Fully responsive design - works perfectly on all mobile devices
+- 🤖 AI opponent with multiple difficulty levels
 - ✨ Smooth animations and visual feedback
 - 🎯 Win detection with highlighted winning line
+- 🤝 Tie game detection with unique animations
 - 🔄 Easy game reset functionality
-- 🎨 Distinctive X and O colors (red and blue)
+- 🎨 Distinctive player colors and animations
+- 🌈 Confetti celebrations for wins
+- 📱 Optimized mobile experience:
+  - Dynamic viewport handling
+  - Touch-friendly controls
+  - Mobile-specific animations
+  - Prevent unwanted zooming
+  - Proper button states and feedback
 
 ## Live Demo
 
@@ -36,33 +45,51 @@ That's it! No build process or dependencies required.
 
 ## How to Play
 
-1. The game starts with player X
-2. Players take turns clicking on empty squares to place their mark (X or O)
-3. The first player to get three of their marks in a row (horizontally, vertically, or diagonally) wins
-4. If all squares are filled and no player has won, the game is a tie
-5. Click the "Reset" button to start a new game at any time
+1. Choose your game mode: vs Player or vs Computer
+2. The game starts with player X
+3. Players take turns clicking/tapping on empty squares
+4. First to get three in a row (horizontal, vertical, or diagonal) wins
+5. If all squares are filled with no winner, it's a tie
+6. Use the Reset button to start a new game anytime
+
+## Technical Details
+
+The project uses modern web technologies and best practices:
+
+- Vanilla JavaScript with modular code structure
+- Modern CSS features:
+  - CSS Grid for game board
+  - CSS Variables for theming
+  - Dynamic viewport units (dvh) for mobile
+  - Fluid typography with clamp()
+  - Modern animations and transitions
+- Mobile-first responsive design
+- Semantic HTML with accessibility features
+- Touch event handling with mobile optimizations
 
 ## Project Structure
 
 ```
 IksI-Igul/
 ├── css/
-│   └── style.css
+│   └── style.css      # Styles and animations
 ├── javascript/
-│   ├── game.js
-│   └── version.js
+│   ├── game.js        # Core game logic
+│   ├── ai-player.js   # AI opponent logic
+│   └── version.js     # Version tracking
 ├── index.html
 └── README.md
 ```
 
 ## Development
 
-The project uses vanilla JavaScript with no external dependencies. The code is organized into separate files for better maintainability:
+The project uses vanilla JavaScript with no external dependencies except for the confetti effect. The code is organized into separate files for better maintainability:
 
-- `index.html`: Main HTML structure
-- `style.css`: All styling and animations
-- `game.js`: Game logic and event handlers
-- `version.js`: Version tracking functionality
+- `index.html`: Main HTML structure with semantic markup
+- `style.css`: Modern CSS with responsive design and animations
+- `game.js`: Game logic, event handlers, and mobile optimizations
+- `ai-player.js`: AI opponent implementation with multiple difficulty levels
+- `version.js`: Automatic version tracking functionality
 
 ## Contributing
 
