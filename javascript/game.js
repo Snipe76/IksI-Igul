@@ -7,6 +7,7 @@ const player2 = 'O';
 // Get references to the buttons and instructions
 const buttons = Array.from(document.querySelectorAll('.grid-button'));
 const instructions = document.getElementById('instructions');
+const winLine = document.getElementById('win-line');
 
 // Add event listeners to the buttons
 buttons.forEach(button => button.addEventListener('click', playerClick));
@@ -40,36 +41,51 @@ function checkWinner() {
         [0, 4, 8], [2, 4, 6] // diagonals
     ];
 
+    const winLineClasses = [
+        'row-0', 'row-1', 'row-2',
+        'col-0', 'col-1', 'col-2',
+        'diagonal-1', 'diagonal-2'
+    ];
+
     for (let i = 0; i < winningCombos.length; i++) {
         const [a, b, c] = winningCombos[i];
-        if (buttons[a].textContent && buttons[a].textContent === buttons[b].textContent && buttons[a].textContent === buttons[c].textContent) {
-            alert(`${buttons[a].textContent} wins!`);
+        const btnA = buttons[a];
+        const btnB = buttons[b];
+        const btnC = buttons[c];
+
+        if (btnA.textContent &&
+            btnA.textContent === btnB.textContent &&
+            btnA.textContent === btnC.textContent) {
+
+            setTimeout(() => {
+                alert(`${btnA.textContent} wins!`);
+            }, 100);
+
             playingGame = false;
-            instructions.innerHTML = `<span class='${buttons[a].textContent}'>${buttons[a].textContent}</span> wins!`;
-            const direction = getDirection(a, b, c);
-            buttons[a].classList.add('winner', direction);
-            buttons[b].classList.add('winner', direction);
-            buttons[c].classList.add('winner', direction);
+            instructions.innerHTML = `<span class='${btnA.textContent}'>${btnA.textContent}</span> wins!`;
+
+            [btnA, btnB, btnC].forEach(button => {
+                button.classList.add('winner');
+                button.style.pointerEvents = 'none';
+            });
+
+            // Show the win line
+            winLine.className = winLineClasses[i];
+            winLine.style.display = 'block';
+
+            buttons.forEach(button => {
+                if (!button.classList.contains('winner')) {
+                    button.disabled = true;
+                }
+            });
+            return;
         }
     }
 
     if (playerTurn === 9 && playingGame) {
-        alert('It\'s a tie!');
+        setTimeout(() => alert('It\'s a tie!'), 100);
         playingGame = false;
         instructions.textContent = 'It\'s a tie!';
-    }
-}
-
-// Function to determine the direction of the winning line
-function getDirection(a, b, c) {
-    if (a % 3 === b % 3 && b % 3 === c % 3) {
-        return 'vertical';
-    } else if (Math.floor(a / 3) === Math.floor(b / 3) && Math.floor(b / 3) === Math.floor(c / 3)) {
-        return 'horizontal';
-    } else if (a === 0 && c === 8) {
-        return 'diagonal-left';
-    } else {
-        return 'diagonal-right';
     }
 }
 
@@ -78,12 +94,16 @@ function resetGame() {
     buttons.forEach(button => {
         button.innerHTML = '';
         button.disabled = false;
-        button.classList.remove('X');
-        button.classList.remove('O');
-        button.classList.remove('winner', 'horizontal', 'vertical', 'diagonal-left', 'diagonal-right');
+        button.style.pointerEvents = 'auto';
+        button.classList.remove('X', 'O', 'winner');
     });
+
+    // Hide the win line
+    winLine.style.display = 'none';
+    winLine.className = '';
 
     playingGame = true;
     playerTurn = 0;
+
     instructions.innerHTML = "<span class='X'>X</span> starts the game";
 }
