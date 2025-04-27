@@ -134,24 +134,30 @@ h2 {
     border-radius: 8px;
     cursor: pointer;
     margin-top: min(4vw, 25px);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     touch-action: manipulation;
     position: relative;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
     will-change: transform, background-color, box-shadow;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 #reset:hover,
-#reset:active {
+#reset:active,
+#reset.active {
     background: #444444;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-#reset:active {
+#reset:active,
+#reset.active {
     transform: translateY(1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.1s ease;
 }
 
 /* Footer styles */
@@ -337,6 +343,21 @@ footer:hover {
 
     .winner {
         animation: winPulse 1.2s ease infinite;
+    }
+
+    #reset {
+        padding: 12px 30px;
+        min-width: 120px;
+        min-height: 44px;
+        /* Minimum touch target size */
+        border-width: 1px;
+        margin-top: 20px;
+    }
+
+    #reset:active,
+    #reset.active {
+        transform: scale(0.98);
+        transition: all 0.1s ease;
     }
 }
 

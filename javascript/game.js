@@ -8,6 +8,7 @@ const player2 = 'O';
 let buttons;
 let instructions;
 let winLine;
+let resetButton;
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', initializeGame);
@@ -17,13 +18,18 @@ function initializeGame() {
     buttons = Array.from(document.querySelectorAll('.grid-button'));
     instructions = document.getElementById('instructions');
     winLine = document.getElementById('win-line');
-    const resetButton = document.getElementById('reset');
+    resetButton = document.getElementById('reset');
 
     // Add event listeners
     buttons.forEach(button => {
         button.addEventListener('click', playerClick);
         button.addEventListener('touchstart', handleTouchStart, { passive: true });
     });
+
+    // Add reset button event listeners
+    resetButton.addEventListener('click', resetGame);
+    resetButton.addEventListener('touchstart', handleResetTouch, { passive: false });
+    resetButton.addEventListener('touchend', handleResetTouchEnd);
 
     // Prevent double-tap zoom on mobile
     document.addEventListener('touchend', preventZoom);
@@ -36,6 +42,17 @@ function handleTouchStart(event) {
 
     // Trigger click event
     event.target.click();
+}
+
+function handleResetTouch(event) {
+    event.preventDefault();
+    resetButton.classList.add('active');
+}
+
+function handleResetTouchEnd(event) {
+    event.preventDefault();
+    resetButton.classList.remove('active');
+    resetGame();
 }
 
 function preventZoom(event) {
@@ -184,6 +201,8 @@ function checkWinner() {
 
 // Function to reset the game
 function resetGame() {
+    if (!buttons) return; // Safety check
+
     buttons.forEach(button => {
         button.innerHTML = '';
         button.disabled = false;
@@ -192,11 +211,15 @@ function resetGame() {
     });
 
     // Hide the win line
-    winLine.style.display = 'none';
-    winLine.className = '';
+    if (winLine) {
+        winLine.style.display = 'none';
+        winLine.className = '';
+    }
 
     playingGame = true;
     playerTurn = 0;
 
-    instructions.innerHTML = "<span class='X'>X</span> starts the game";
+    if (instructions) {
+        instructions.innerHTML = "<span class='X'>X</span> starts the game";
+    }
 }
