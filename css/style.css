@@ -637,6 +637,8 @@ footer p {
     height: clamp(45px, 8vw, 60px);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 .difficulty-select:hover,
@@ -691,5 +693,17 @@ footer p {
     .difficulty-title {
         text-align: center;
         margin-bottom: clamp(8px, 1.5vw, 10px);
+    }
+
+    .difficulty-select {
+        font-size: 16px;
+        /* Prevent iOS zoom on focus */
+        padding-right: 30px;
+        /* Make room for the custom arrow */
+    }
+
+    .difficulty-container::after {
+        right: 25px;
+        /* Adjust arrow position for mobile */
     }
 }

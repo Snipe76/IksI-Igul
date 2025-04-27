@@ -136,6 +136,7 @@ function handleDifficultyTouch(event) {
         event.preventDefault();
         return;
     }
+    // Add active class but don't prevent default behavior
     difficultySelect.classList.add('active');
 }
 
@@ -144,6 +145,7 @@ function handleDifficultyTouchEnd(event) {
         event.preventDefault();
         return;
     }
+    // Just remove active class, don't prevent default
     difficultySelect.classList.remove('active');
 }
 
