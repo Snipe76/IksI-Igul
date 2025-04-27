@@ -1,0 +1,171 @@
+/* Game controls */
+.game-controls {
+    width: 100%;
+    display: flex;
+    gap: clamp(10px, 2vw, 15px);
+    margin-top: clamp(15px, 3vw, 20px);
+    padding: 0 clamp(8px, 2vw, 15px);
+}
+
+/* Control buttons */
+#reset,
+#mode-switch {
+    flex: 1;
+    padding: clamp(10px, 2vw, 14px) clamp(20px, 3vw, 35px);
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    border: none;
+    border-radius: clamp(8px, 1.5vw, 10px);
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s var(--animation-timing);
+}
+
+#reset {
+    background: var(--button-bg);
+    color: var(--text-primary);
+}
+
+#reset:hover,
+#reset:focus-visible {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+#mode-switch {
+    background: var(--computer-mode);
+    color: var(--primary-bg);
+}
+
+#mode-switch:hover,
+#mode-switch:focus-visible {
+    background: var(--computer-mode-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(125, 207, 255, 0.3);
+}
+
+#mode-switch.vs-human {
+    background: var(--human-mode);
+}
+
+#mode-switch.vs-human:hover,
+#mode-switch.vs-human:focus-visible {
+    background: var(--human-mode-hover);
+    box-shadow: 0 8px 20px rgba(158, 206, 106, 0.3);
+}
+
+/* Difficulty selector */
+.difficulty-container {
+    width: 100%;
+    margin-bottom: clamp(12px, 2vw, 15px);
+    padding: 0 clamp(8px, 2vw, 15px);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s var(--animation-timing);
+    position: relative;
+}
+
+.difficulty-container.visible {
+    opacity: 1;
+    height: clamp(85px, 14vw, 100px);
+    margin-top: clamp(8px, 1.5vw, 12px);
+}
+
+.difficulty-title {
+    color: var(--text-secondary);
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    font-weight: 600;
+    margin-bottom: clamp(6px, 1vw, 8px);
+    text-align: center;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
+
+.difficulty-select {
+    width: 100%;
+    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 16px);
+    font-size: 16px;
+    color: var(--text-primary);
+    background: var(--button-bg);
+    border: 2px solid var(--button-border);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.2s var(--animation-timing);
+    height: clamp(45px, 8vw, 60px);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+.difficulty-select:hover,
+.difficulty-select:focus {
+    background: var(--button-hover);
+    border-color: var(--text-secondary);
+    outline: none;
+}
+
+.difficulty-select:active {
+    transform: translateY(1px);
+}
+
+/* Custom dropdown arrow */
+.difficulty-container::after {
+    content: '';
+    position: absolute;
+    right: clamp(20px, 4vw, 30px);
+    top: calc(50% + clamp(12px, 2vw, 15px));
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--text-primary);
+    pointer-events: none;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    z-index: 1;
+}
+
+/* Custom styling for the options */
+.difficulty-select option {
+    background: var(--button-bg);
+    color: var(--text-primary);
+    padding: 12px;
+    font-size: 16px;
+    font-weight: inherit;
+    text-align: center;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 480px) {
+    .game-controls {
+        flex-direction: column;
+    }
+
+    #reset,
+    #mode-switch {
+        width: 100%;
+    }
+
+    .difficulty-title {
+        text-align: center;
+        margin-bottom: clamp(8px, 1.5vw, 10px);
+    }
+
+    .difficulty-select {
+        padding-right: 35px;
+    }
+
+    .difficulty-container::after {
+        right: 25px;
+    }
+}

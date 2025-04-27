@@ -17,19 +17,23 @@
             --text-primary: #c0caf5;
         }
 
-        .loading {
-            opacity: 0;
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-bg);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #loading-spinner {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             color: var(--text-primary);
             font-family: sans-serif;
             font-size: 16px;
-            z-index: 1000;
             background: var(--primary-bg);
             padding: 1rem;
             border-radius: 4px;
@@ -49,8 +53,10 @@
     <title>Tic Tac Toe</title>
 </head>
 
-<body class="loading">
-    <div id="loading-spinner">Loading...</div>
+<body>
+    <div id="loading-overlay">
+        <div id="loading-spinner">Loading...</div>
+    </div>
     <main>
         <!-- Main title -->
         <h1>Tic Tac Toe</h1>
@@ -94,9 +100,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" async></script>
-    <script src="javascript/ai-player.js" defer></script>
-    <script src="javascript/game.js" defer></script>
-    <script src="javascript/version.js" defer></script>
+    <script src="./javascript/core/Game.js" type="module" defer></script>
 </body>
 
 </html>

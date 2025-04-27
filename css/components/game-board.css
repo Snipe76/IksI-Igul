@@ -1,0 +1,171 @@
+/* Game Board Styles */
+.grid {
+    width: min(100%, 400px);
+    aspect-ratio: 1;
+    gap: clamp(6px, 1.5vw, 8px);
+    margin: clamp(15px, 3vw, 20px) auto;
+    padding: clamp(8px, 2vw, 12px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    background: var(--primary-bg);
+    border-radius: clamp(12px, 2vw, 16px);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.grid-button {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--button-border);
+    background: var(--button-bg);
+    color: var(--text-primary);
+    font-size: clamp(1.8rem, 8vw, 4rem);
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: clamp(6px, 1.5vw, 10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s var(--animation-timing);
+    position: relative;
+    overflow: hidden;
+}
+
+.grid-button:hover:not(:disabled),
+.grid-button:focus-visible:not(:disabled) {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--text-secondary);
+}
+
+.grid-button:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grid-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.grid-button span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    line-height: 1;
+    width: auto;
+    height: auto;
+    animation: popInJuicy 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    will-change: transform, opacity;
+}
+
+/* Win line styles */
+#win-line {
+    position: absolute;
+    background: linear-gradient(90deg, var(--x-color), var(--o-color));
+    opacity: 0.8;
+    height: 4px;
+    display: none;
+    z-index: 3;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Win line positions */
+#win-line.row-0 {
+    width: 100%;
+    top: 16.67%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+#win-line.row-1 {
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+#win-line.row-2 {
+    width: 100%;
+    top: 83.33%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+#win-line.col-0 {
+    width: 5px;
+    height: 100%;
+    left: 16.67%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+#win-line.col-1 {
+    width: 5px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+#win-line.col-2 {
+    width: 5px;
+    height: 100%;
+    left: 83.33%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+#win-line.diagonal-1 {
+    width: 141.42%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+#win-line.diagonal-2 {
+    width: 141.42%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Player styles */
+.X {
+    color: var(--x-color);
+    text-shadow: 0 0 15px rgba(247, 118, 142, 0.4);
+}
+
+.O {
+    color: var(--o-color);
+    text-shadow: 0 0 15px rgba(122, 162, 247, 0.4);
+}
+
+/* Animations */
+@keyframes popInJuicy {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+    }
+
+    70% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(-2deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0);
+    }
+}
