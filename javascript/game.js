@@ -10,39 +10,60 @@ const instructions = document.getElementById('instructions');
 const winLine = document.getElementById('win-line');
 
 // Function to trigger confetti
-function celebrateWin() {
-    const colors = ['#ff0000', '#0000ff'];
-    const end = Date.now() + 1000;
+function celebrateWin(winnerClass) {
+    const colors = winnerClass === 'X' ? ['#ff0000'] : ['#0000ff'];
 
-    // Launch confetti from both sides
-    const leftConfetti = () => {
-        if (Date.now() < end) {
-            confetti({
-                particleCount: 2,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0, y: 0.7 },
-                colors: colors
-            });
-            requestAnimationFrame(leftConfetti);
-        }
+    // Check if device is mobile
+    const isMobile = window.innerWidth <= 768;
+
+    // Configure confetti based on device
+    const config = {
+        particleCount: isMobile ? 100 : 500,
+        spread: isMobile ? 100 : 200,
+        startVelocity: isMobile ? 20 : 50,
+        gravity: 0.8,
+        scalar: isMobile ? 0.7 : 1,
+        disableForReducedMotion: true,
+        colors: colors
     };
 
-    const rightConfetti = () => {
-        if (Date.now() < end) {
-            confetti({
-                particleCount: 2,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1, y: 0.7 },
-                colors: colors
-            });
-            requestAnimationFrame(rightConfetti);
-        }
-    };
+    // Single burst for mobile, three bursts for desktop
+    if (isMobile) {
+        // Center burst for mobile
+        confetti({
+            ...config,
+            origin: { x: 0.5, y: 0.6 }
+        });
+    } else {
+        let burstCount = 0;
+        const maxBursts = 3;
+        const burstInterval = 300; // Time between bursts in ms
 
-    leftConfetti();
-    rightConfetti();
+        const fireBurst = () => {
+            if (burstCount < maxBursts) {
+                // Left side burst
+                confetti({
+                    ...config,
+                    angle: 60,
+                    origin: { x: 0, y: 0.7 }
+                });
+
+                // Right side burst
+                confetti({
+                    ...config,
+                    angle: 120,
+                    origin: { x: 1, y: 0.7 }
+                });
+
+                burstCount++;
+                if (burstCount < maxBursts) {
+                    setTimeout(fireBurst, burstInterval);
+                }
+            }
+        };
+
+        fireBurst();
+    }
 }
 
 // Add event listeners to the buttons
@@ -93,10 +114,6 @@ function checkWinner() {
             btnA.textContent === btnB.textContent &&
             btnA.textContent === btnC.textContent) {
 
-            setTimeout(() => {
-                alert(`${btnA.textContent} wins!`);
-            }, 100);
-
             playingGame = false;
             instructions.innerHTML = `<span class='${btnA.textContent}'>${btnA.textContent}</span> wins!`;
 
@@ -109,20 +126,20 @@ function checkWinner() {
             winLine.className = winLineClasses[i];
             winLine.style.display = 'block';
 
-            // Trigger confetti celebration
-            celebrateWin();
-
+            // Disable all buttons
             buttons.forEach(button => {
                 if (!button.classList.contains('winner')) {
                     button.disabled = true;
                 }
             });
+
+            // Trigger confetti with winner's color
+            celebrateWin(btnA.textContent);
             return;
         }
     }
 
     if (playerTurn === 9 && playingGame) {
-        setTimeout(() => alert('It\'s a tie!'), 100);
         playingGame = false;
         instructions.textContent = 'It\'s a tie!';
     }
