@@ -22,7 +22,7 @@ export class AIPlayer {
         }
 
         // For easy difficulty, sometimes make random moves
-        if (this.difficulty === 'easy' && Math.random() < 0.4) {
+        if (this.difficulty.toLowerCase() === 'easy' && Math.random() < 0.4) {
             return availableMoves[Math.floor(Math.random() * availableMoves.length)];
         }
 
