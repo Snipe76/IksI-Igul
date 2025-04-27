@@ -17,11 +17,75 @@ let gameModeText;
 let difficultyContainer;
 let difficultySelect;
 
-// Wait for all resources to be fully loaded
-window.addEventListener('load', () => {
-    if (initializeGame()) {
-        initializeEventListeners();
-        setMobileHeight();
+// Function to check if stylesheet is loaded
+function isStylesheetLoaded(styleSheet) {
+    try {
+        return styleSheet.cssRules || styleSheet.rules;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Function to wait for stylesheets to load
+function waitForStylesheets() {
+    return new Promise((resolve) => {
+        const links = document.getElementsByTagName('link');
+        const stylesheets = Array.from(links).filter(link =>
+            link.rel === 'stylesheet' && !isStylesheetLoaded(link.sheet)
+        );
+
+        if (stylesheets.length === 0) {
+            resolve();
+            return;
+        }
+
+        let loaded = 0;
+        const checkLoaded = () => {
+            loaded++;
+            if (loaded === stylesheets.length) {
+                resolve();
+            }
+        };
+
+        stylesheets.forEach(stylesheet => {
+            if (stylesheet.sheet) {
+                checkLoaded();
+            } else {
+                stylesheet.onload = checkLoaded;
+                stylesheet.onerror = checkLoaded; // Continue even if a stylesheet fails
+            }
+        });
+
+        // Shorter fallback timeout
+        setTimeout(resolve, 2000);
+    });
+}
+
+// Initialize game immediately but keep content hidden
+document.addEventListener('DOMContentLoaded', () => {
+    // Start initialization early
+    initializeGame();
+    initializeEventListeners();
+    setMobileHeight();
+});
+
+// Remove loading state when everything is ready
+window.addEventListener('load', async () => {
+    try {
+        // Quick check for stylesheet loading
+        await waitForStylesheets();
+
+        // Remove loading state immediately
+        requestAnimationFrame(() => {
+            document.body.classList.remove('loading');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            if (loadingSpinner) {
+                loadingSpinner.remove();
+            }
+        });
+    } catch (error) {
+        console.error('Failed to initialize game:', error);
+        document.body.innerHTML = '<div style="color: var(--text-primary); text-align: center; padding: 2rem;">Failed to initialize game. Please refresh the page.</div>';
     }
 });
 

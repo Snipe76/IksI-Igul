@@ -14,20 +14,43 @@
     <style>
         :root {
             --primary-bg: #1a1b26;
+            --text-primary: #c0caf5;
+        }
+
+        .loading {
+            opacity: 0;
+        }
+
+        #loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-primary);
+            font-family: sans-serif;
+            font-size: 16px;
+            z-index: 1000;
+            background: var(--primary-bg);
+            padding: 1rem;
+            border-radius: 4px;
         }
 
         body {
-            visibility: hidden;
-            background-color: var(--primary-bg);
+            background: var(--primary-bg);
+            margin: 0;
         }
     </style>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="css/style.css" as="style">
 
     <!-- Main stylesheet -->
     <link rel="stylesheet" href="css/style.css" media="all">
     <title>Tic Tac Toe</title>
 </head>
 
-<body>
+<body class="loading">
+    <div id="loading-spinner">Loading...</div>
     <main>
         <!-- Main title -->
         <h1>Tic Tac Toe</h1>
