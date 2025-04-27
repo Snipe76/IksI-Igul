@@ -275,6 +275,23 @@ footer {
 
 footer p {
     margin: 0.5em 0;
+    color: var(--text-secondary);
+}
+
+#version {
+    display: inline-block;
+    padding: 0.2em 0.5em;
+    background: var(--button-bg);
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    color: var(--text-primary);
+    transition: all 0.2s var(--animation-timing);
+}
+
+#version:hover {
+    background: var(--button-hover);
+    transform: translateY(-1px);
 }
 
 /* Win line styles */

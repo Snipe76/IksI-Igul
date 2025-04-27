@@ -1,17 +1,58 @@
-// Function to fetch the latest commit hash
-async function updateVersion() {
-    try {
-        const response = await fetch('https://api.github.com/repos/Snipe76/IksI-Igul/commits/main');
-        if (response.ok) {
-            const data = await response.json();
-            const shortHash = data.sha.substring(0, 7);
-            const versionElement = document.getElementById('version');
-            versionElement.textContent = `1.0.0-${shortHash}`;
-        }
-    } catch (error) {
-        console.log('Failed to fetch version:', error);
+// Version information
+const versionInfo = {
+    major: 1,
+    minor: 1,
+    patch: 0,
+    build: 'dev',
+    timestamp: new Date().toISOString(),
+    branch: 'main'
+};
+
+// Function to format the version string
+function formatVersion() {
+    const { major, minor, patch, build } = versionInfo;
+    const shortDate = new Date().toISOString().split('T')[0];
+    return `${major}.${minor}.${patch}-${build}.${shortDate}`;
+}
+
+// Function to update version display
+function updateVersionDisplay() {
+    const versionElement = document.getElementById('version');
+    if (versionElement) {
+        versionElement.textContent = formatVersion();
+
+        // Add title with full version info
+        const fullInfo = `Version: ${formatVersion()}\nBuild: ${versionInfo.build}\nDate: ${versionInfo.timestamp}\nBranch: ${versionInfo.branch}`;
+        versionElement.title = fullInfo;
+
+        // Add hover styles
+        versionElement.style.cursor = 'help';
+        versionElement.style.borderBottom = '1px dotted var(--text-muted)';
     }
 }
 
-// Update version when the page loads
+// Function to fetch the latest Git commit info
+async function fetchGitInfo() {
+    try {
+        const response = await fetch('.git/refs/heads/main');
+        if (response.ok) {
+            const commitHash = await response.text();
+            versionInfo.build = commitHash.slice(0, 7); // Short hash
+        }
+    } catch (error) {
+        console.log('Using default version info');
+    }
+}
+
+// Initialize version info
+async function initializeVersion() {
+    await fetchGitInfo();
+    updateVersionDisplay();
+}
+
+// Update version display when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeVersion);
+
+// Export version info for potential use in other scripts
+window.versionInfo = versionInfo;
 document.addEventListener('DOMContentLoaded', updateVersion); 
