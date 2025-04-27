@@ -9,6 +9,42 @@ const buttons = Array.from(document.querySelectorAll('.grid-button'));
 const instructions = document.getElementById('instructions');
 const winLine = document.getElementById('win-line');
 
+// Function to trigger confetti
+function celebrateWin() {
+    const colors = ['#ff0000', '#0000ff'];
+    const end = Date.now() + 1000;
+
+    // Launch confetti from both sides
+    const leftConfetti = () => {
+        if (Date.now() < end) {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0, y: 0.7 },
+                colors: colors
+            });
+            requestAnimationFrame(leftConfetti);
+        }
+    };
+
+    const rightConfetti = () => {
+        if (Date.now() < end) {
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1, y: 0.7 },
+                colors: colors
+            });
+            requestAnimationFrame(rightConfetti);
+        }
+    };
+
+    leftConfetti();
+    rightConfetti();
+}
+
 // Add event listeners to the buttons
 buttons.forEach(button => button.addEventListener('click', playerClick));
 
@@ -72,6 +108,9 @@ function checkWinner() {
             // Show the win line
             winLine.className = winLineClasses[i];
             winLine.style.display = 'block';
+
+            // Trigger confetti celebration
+            celebrateWin();
 
             buttons.forEach(button => {
                 if (!button.classList.contains('winner')) {
