@@ -1,35 +1,4 @@
-/* Base styles and variables */
-:root {
-    --primary-bg: #1a1b26;
-    --secondary-bg: #24283b;
-    --button-bg: #292e42;
-    --button-border: #565f89;
-    --button-hover: #414868;
-    --text-primary: #c0caf5;
-    --text-secondary: #a9b1d6;
-    --text-muted: #787c99;
-    --x-color: #f7768e;
-    --o-color: #7aa2f7;
-    --tie-color: #e0af68;
-    --computer-mode: #7dcfff;
-    --computer-mode-hover: #89ddff;
-    --human-mode: #9ece6a;
-    --human-mode-hover: #b9f27c;
-    --winner-x-bg: rgba(247, 118, 142, 0.3);
-    --winner-o-bg: rgba(122, 162, 247, 0.3);
-    --animation-timing: cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    --game-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-/* Critical styles that should be applied immediately */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Import base styles */
+/* Import base styles - These should be first to define all variables */
 @import url('./base/variables.css');
 @import url('./base/reset.css');
 @import url('./base/base.css');
@@ -45,7 +14,7 @@
 /* Import utilities */
 @import url('./utilities/utilities.css');
 
-/* Reset and base styles */
+/* Critical styles that should be applied immediately */
 * {
     margin: 0;
     padding: 0;
@@ -76,84 +45,14 @@ body {
         linear-gradient(45deg, transparent 0%, rgba(122, 162, 247, 0.1) 100%);
     background-blend-mode: overlay;
     color: var(--text-primary);
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--font-family);
     padding: min(3vw, 15px);
     text-align: center;
     width: 100%;
     overflow-x: hidden;
 }
 
-/* Main container with improved scaling */
-main {
-    width: min(100%, 600px);
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: clamp(0.8rem, 3vw, 1.5rem);
-    border-radius: clamp(14px, 2vw, 20px);
-    background: var(--secondary-bg);
-    box-shadow: var(--game-shadow);
-    position: relative;
-    overflow: visible;
-}
-
-main::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background: linear-gradient(90deg, var(--x-color), var(--o-color));
-    opacity: 0.5;
-    border-top-left-radius: clamp(14px, 2vw, 20px);
-    border-top-right-radius: clamp(14px, 2vw, 20px);
-}
-
-/* Title with responsive scaling */
-h1 {
-    width: 100%;
-    margin-bottom: clamp(15px, 3vw, 20px);
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    color: var(--text-primary);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    letter-spacing: 2px;
-    font-weight: 800;
-    padding: 0 clamp(8px, 2vw, 15px);
-}
-
-/* Mode text with improved scaling */
-.mode-text {
-    width: 100%;
-    margin-bottom: clamp(12px, 2vw, 15px);
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
-    padding: 0 clamp(8px, 2vw, 15px);
-}
-
-.mode-text span {
-    color: var(--text-secondary);
-    font-weight: bold;
-    padding: 0.2em 0.5em;
-    border-radius: 4px;
-    background: var(--button-bg);
-    transition: all 0.3s var(--animation-timing);
-}
-
-.mode-text.vs-computer span {
-    color: var(--computer-mode);
-    background: rgba(125, 207, 255, 0.1);
-}
-
-/* Instructions with consistent scaling */
-h2 {
-    width: 100%;
-    margin-bottom: clamp(15px, 3vw, 20px);
-    font-size: clamp(1rem, 3vw, 1.6rem);
-    padding: 0 clamp(8px, 2vw, 15px);
-}
-
-/* Player colors */
+/* Player colors - These are used in multiple components */
 .X {
     color: var(--x-color);
     text-shadow: 0 0 15px rgba(247, 118, 142, 0.4);

@@ -138,17 +138,6 @@
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Player styles */
-.X {
-    color: var(--x-color);
-    text-shadow: 0 0 15px rgba(247, 118, 142, 0.4);
-}
-
-.O {
-    color: var(--o-color);
-    text-shadow: 0 0 15px rgba(122, 162, 247, 0.4);
-}
-
 /* Animations */
 @keyframes popInJuicy {
     0% {
