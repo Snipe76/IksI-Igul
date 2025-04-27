@@ -7,35 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="A modern Tic Tac Toe game with AI opponent and animations">
+    <meta name="theme-color" content="#121212">
     <link rel="stylesheet" href="css/style.css">
     <title>Tic Tac Toe</title>
 </head>
 
 <body>
-    <!-- Main title -->
-    <h1>Tic Tac Toe</h1>
-    <!-- Game mode -->
-    <p id="game-mode" class="mode-text">Playing against: <span>Another Player</span></p>
-    <!-- Instructions -->
-    <h2 id="instructions"><span class="X">X</span> starts the game</h2>
-    <!-- Game grid -->
-    <div class="grid">
-        <div id="win-line"></div>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-        <button class="grid-button"></button>
-    </div>
-    <!-- Game controls -->
-    <div class="game-controls">
-        <button id="reset" onclick="resetGame()">Reset</button>
-        <button id="mode-switch">vs Computer</button>
-    </div>
+    <main>
+        <!-- Main title -->
+        <h1>Tic Tac Toe</h1>
+        <!-- Game mode -->
+        <p id="game-mode" class="mode-text">Playing against: <span>Another Player</span></p>
+        <!-- Instructions -->
+        <h2 id="instructions"><span class="X">X</span> starts the game</h2>
+        <!-- Game grid -->
+        <div class="grid" role="grid" aria-label="Tic Tac Toe game board">
+            <div id="win-line" aria-hidden="true"></div>
+            <button class="grid-button" aria-label="Empty cell" data-index="0"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="1"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="2"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="3"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="4"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="5"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="6"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="7"></button>
+            <button class="grid-button" aria-label="Empty cell" data-index="8"></button>
+        </div>
+        <!-- Game controls -->
+        <div class="game-controls">
+            <button id="reset" aria-label="Reset game">Reset</button>
+            <button id="mode-switch" aria-label="Toggle game mode">vs Computer</button>
+        </div>
+    </main>
     <!-- Footer -->
     <footer>
         <p>Created by Evgeniy Gutman</p>
@@ -43,10 +47,10 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="javascript/ai-player.js"></script>
-    <script src="javascript/game.js"></script>
-    <script src="javascript/version.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" async></script>
+    <script src="javascript/ai-player.js" defer></script>
+    <script src="javascript/game.js" defer></script>
+    <script src="javascript/version.js" defer></script>
 </body>
 
 </html>

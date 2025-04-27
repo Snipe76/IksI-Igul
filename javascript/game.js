@@ -180,17 +180,9 @@ function makeAIMove() {
 
 // Function to disable/enable all buttons
 function disableAllButtons(disable) {
-    buttons.forEach(button => {
-        if (!button.textContent) { // Only affect empty buttons
-            button.disabled = disable;
-            button.style.cursor = disable ? 'not-allowed' : 'pointer';
-        } else if (isVsComputer && button.classList.contains('O')) {
-            // Always disable AI moves
-            button.style.pointerEvents = 'none';
-        }
-    });
+    disablePlayButtons(disable);
 
-    // Also disable mode switch and reset during AI turn
+    // Also disable mode switch and reset during AI turn only
     modeSwitch.disabled = disable;
     resetButton.disabled = disable;
 
@@ -201,6 +193,21 @@ function disableAllButtons(disable) {
         modeSwitch.style.opacity = '1';
         resetButton.style.opacity = '1';
     }
+}
+
+// Function to disable/enable only play buttons
+function disablePlayButtons(disable) {
+    buttons.forEach(button => {
+        if (button.getAttribute('data-played') === 'true') {
+            // Always ensure played buttons are completely disabled
+            button.disabled = true;
+            button.style.pointerEvents = 'none';
+        } else {
+            button.disabled = disable;
+            button.style.pointerEvents = disable ? 'none' : 'auto';
+            button.style.cursor = disable ? 'not-allowed' : 'pointer';
+        }
+    });
 }
 
 // Function to update instructions
@@ -226,11 +233,8 @@ function handleTie() {
     const gridElement = document.querySelector('.grid');
     gridElement.classList.add('tie');
 
-    // Add tie game class to all buttons
-    buttons.forEach(button => {
-        button.disabled = true;
-        button.style.pointerEvents = 'none';
-    });
+    // Disable only play buttons
+    disablePlayButtons(true);
 
     // Update instructions with animated text
     instructions.innerHTML = '<span class="tie-text">It\'s a tie!</span>';
@@ -300,13 +304,8 @@ function checkWinner() {
                 winLine.style.display = 'block';
             }, 200);
 
-            // Disable all buttons
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (!button.classList.contains('winner')) {
-                    button.style.opacity = '0.7';
-                }
-            });
+            // Disable only play buttons
+            disablePlayButtons(true);
 
             // Trigger confetti with winner's color
             celebrateWin(btnA.textContent);
@@ -324,7 +323,7 @@ function resetGame() {
     if (!buttons) return; // Safety check
 
     isAIThinking = false;
-    disableAllButtons(false);
+    disablePlayButtons(false);
 
     buttons.forEach(button => {
         button.innerHTML = '';
@@ -333,6 +332,7 @@ function resetGame() {
         button.style.opacity = '1';
         button.style.cursor = 'pointer';
         button.classList.remove('X', 'O', 'winner');
+        button.removeAttribute('data-played');
     });
 
     // Hide the win line
@@ -343,7 +343,7 @@ function resetGame() {
 
     // Remove tie game classes
     const gridElement = document.querySelector('.grid');
-    gridElement.classList.remove('tie', 'tie-game');
+    gridElement.classList.remove('tie', 'tie-game', 'win-celebration');
 
     playingGame = true;
     playerTurn = 0;
