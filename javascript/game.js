@@ -18,9 +18,9 @@ function celebrateWin(winnerClass) {
 
     // Configure confetti based on device
     const config = {
-        particleCount: isMobile ? 100 : 500,
-        spread: isMobile ? 100 : 200,
-        startVelocity: isMobile ? 20 : 50,
+        particleCount: isMobile ? 100 : 400,
+        spread: isMobile ? 200 : 200,
+        startVelocity: isMobile ? 30 : 60,
         gravity: 0.8,
         scalar: isMobile ? 0.7 : 1,
         disableForReducedMotion: true,
@@ -36,7 +36,7 @@ function celebrateWin(winnerClass) {
         });
     } else {
         let burstCount = 0;
-        const maxBursts = 3;
+        const maxBursts = 2;
         const burstInterval = 300; // Time between bursts in ms
 
         const fireBurst = () => {
