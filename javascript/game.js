@@ -49,6 +49,8 @@ function initializeGame() {
 
     // Add difficulty change listener
     difficultySelect.addEventListener('change', handleDifficultyChange);
+    difficultySelect.addEventListener('touchstart', handleDifficultyTouch, { passive: false });
+    difficultySelect.addEventListener('touchend', handleDifficultyTouchEnd);
 
     // Initialize AI player
     aiPlayer = new AIPlayer(difficultySelect.value);
@@ -126,6 +128,23 @@ function handleModeSwitchTouchEnd(event) {
     event.preventDefault();
     modeSwitch.classList.remove('active');
     toggleGameMode();
+}
+
+// Touch event handlers for difficulty select
+function handleDifficultyTouch(event) {
+    if (isAIThinking) {
+        event.preventDefault();
+        return;
+    }
+    difficultySelect.classList.add('active');
+}
+
+function handleDifficultyTouchEnd(event) {
+    if (isAIThinking) {
+        event.preventDefault();
+        return;
+    }
+    difficultySelect.classList.remove('active');
 }
 
 // Remove onclick from HTML since we're handling it in JavaScript

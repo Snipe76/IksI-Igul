@@ -600,6 +600,7 @@ footer p {
     height: 0;
     overflow: hidden;
     transition: all 0.3s var(--animation-timing);
+    position: relative;
 }
 
 .difficulty-container.visible {
@@ -634,19 +635,38 @@ footer p {
     -webkit-appearance: none;
     transition: all 0.2s var(--animation-timing);
     height: clamp(45px, 8vw, 60px);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .difficulty-select:hover,
-.difficulty-select:focus-visible {
+.difficulty-select:focus-visible,
+.difficulty-select.active {
     background: var(--button-hover);
     border-color: var(--text-secondary);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.difficulty-select:focus-visible {
-    outline: 3px solid var(--text-primary);
-    outline-offset: 2px;
+.difficulty-select:active,
+.difficulty-select.active:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure the select opens properly on touch devices */
+.difficulty-select:focus {
+    outline: none;
+    border-color: var(--text-secondary);
+}
+
+/* Custom styling for the options */
+.difficulty-select option {
+    background: var(--button-bg);
+    color: var(--text-primary);
+    padding: clamp(8px, 1.5vw, 12px);
+    font-size: inherit;
+    font-weight: inherit;
 }
 
 /* Custom dropdown arrow */
@@ -654,7 +674,8 @@ footer p {
     content: '';
     position: absolute;
     right: clamp(20px, 4vw, 30px);
-    top: 50%;
+    top: calc(50% + 20px);
+    /* Adjust vertical position to account for title */
     width: 0;
     height: 0;
     border-left: 8px solid transparent;
