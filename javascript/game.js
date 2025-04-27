@@ -52,6 +52,8 @@ function initializeGame() {
 
 // Function to toggle game mode
 function toggleGameMode() {
+    if (isAIThinking) return; // Don't allow mode switch while AI is thinking
+
     isVsComputer = !isVsComputer;
     modeSwitch.textContent = isVsComputer ? 'vs Human' : 'vs Computer';
     modeSwitch.classList.toggle('vs-human', !isVsComputer);
@@ -92,11 +94,13 @@ function preventZoom(event) {
 
 // Touch event handlers for mode switch
 function handleModeSwitchTouch(event) {
+    if (isAIThinking) return; // Don't allow mode switch while AI is thinking
     event.preventDefault();
     modeSwitch.classList.add('active');
 }
 
 function handleModeSwitchTouchEnd(event) {
+    if (isAIThinking) return; // Don't allow mode switch while AI is thinking
     event.preventDefault();
     modeSwitch.classList.remove('active');
     toggleGameMode();
@@ -134,6 +138,11 @@ function makeMove(button, player) {
     button.classList.add(player);
     button.disabled = true;
 
+    if (isVsComputer && player === player2) {
+        // If it's the AI's move, completely disable interaction
+        button.style.pointerEvents = 'none';
+    }
+
     playerTurn++;
     updateInstructions();
     checkWinner();
@@ -170,6 +179,9 @@ function disableAllButtons(disable) {
         if (!button.textContent) { // Only affect empty buttons
             button.disabled = disable;
             button.style.cursor = disable ? 'not-allowed' : 'pointer';
+        } else if (isVsComputer && button.classList.contains('O')) {
+            // Always disable AI moves
+            button.style.pointerEvents = 'none';
         }
     });
 
