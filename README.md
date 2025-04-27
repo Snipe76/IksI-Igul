@@ -15,7 +15,7 @@ A modern, responsive implementation of the classic Tic Tac Toe game built with H
 
 ## Live Demo
 
-You can play the game here: [Live Demo Link]
+You can play the game here: https://snipe76.github.io/IksI-Igul/
 
 ## Getting Started
 
