@@ -38,6 +38,11 @@ function initializeGame() {
     resetButton.addEventListener('touchstart', handleResetTouch, { passive: false });
     resetButton.addEventListener('touchend', handleResetTouchEnd);
 
+    // Add mode switch button event listeners
+    modeSwitch.addEventListener('click', toggleGameMode);
+    modeSwitch.addEventListener('touchstart', handleModeSwitchTouch, { passive: false });
+    modeSwitch.addEventListener('touchend', handleModeSwitchTouchEnd);
+
     // Initialize AI player
     aiPlayer = new AIPlayer('normal');
 
@@ -84,6 +89,21 @@ function preventZoom(event) {
         event.preventDefault();
     }
 }
+
+// Touch event handlers for mode switch
+function handleModeSwitchTouch(event) {
+    event.preventDefault();
+    modeSwitch.classList.add('active');
+}
+
+function handleModeSwitchTouchEnd(event) {
+    event.preventDefault();
+    modeSwitch.classList.remove('active');
+    toggleGameMode();
+}
+
+// Remove onclick from HTML since we're handling it in JavaScript
+modeSwitch.removeAttribute('onclick');
 
 // Function to handle button clicks
 function playerClick(event) {
