@@ -3,7 +3,7 @@ const versionInfo = {
     major: 1,
     minor: 1,
     patch: 0,
-    build: 'dev',
+    build: 'release',
     timestamp: new Date().toISOString(),
     branch: 'main'
 };
@@ -12,7 +12,7 @@ const versionInfo = {
 function formatVersion() {
     const { major, minor, patch, build } = versionInfo;
     const shortDate = new Date().toISOString().split('T')[0];
-    return `${major}.${minor}.${patch}-${build}.${shortDate}`;
+    return `${major}.${minor}.${patch} (${shortDate})`;
 }
 
 // Function to update version display
@@ -22,7 +22,7 @@ function updateVersionDisplay() {
         versionElement.textContent = formatVersion();
 
         // Add title with full version info
-        const fullInfo = `Version: ${formatVersion()}\nBuild: ${versionInfo.build}\nDate: ${versionInfo.timestamp}\nBranch: ${versionInfo.branch}`;
+        const fullInfo = `Version: ${formatVersion()}\nBuild: ${versionInfo.build}\nDate: ${versionInfo.timestamp}`;
         versionElement.title = fullInfo;
 
         // Add hover styles
