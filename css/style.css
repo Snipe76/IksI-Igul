@@ -21,6 +21,13 @@
     --game-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
+/* Initial loading state */
+body {
+    visibility: hidden;
+    background-color: var(--primary-bg);
+}
+
+/* Critical styles that should be applied immediately */
 * {
     margin: 0;
     padding: 0;
@@ -32,6 +39,7 @@
 html {
     height: 100%;
     overflow-x: hidden;
+    background-color: var(--primary-bg);
 }
 
 /* Body styles with improved responsiveness */

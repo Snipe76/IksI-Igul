@@ -9,7 +9,21 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="description" content="A modern Tic Tac Toe game with AI opponent and animations">
     <meta name="theme-color" content="#121212">
-    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Critical CSS -->
+    <style>
+        :root {
+            --primary-bg: #1a1b26;
+        }
+
+        body {
+            visibility: hidden;
+            background-color: var(--primary-bg);
+        }
+    </style>
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="css/style.css" media="all">
     <title>Tic Tac Toe</title>
 </head>
 

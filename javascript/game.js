@@ -17,78 +17,112 @@ let gameModeText;
 let difficultyContainer;
 let difficultySelect;
 
-// Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initializeGame();
-    initializeEventListeners();
+// Wait for all resources to be fully loaded
+window.addEventListener('load', () => {
+    if (initializeGame()) {
+        initializeEventListeners();
+        setMobileHeight();
+    }
 });
 
 // Handle mobile viewport height
 function setMobileHeight() {
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    });
 }
 
-// Initial setup
-setMobileHeight();
-
 // Update on resize and orientation change
-window.addEventListener('resize', setMobileHeight);
-window.addEventListener('orientationchange', setMobileHeight);
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(setMobileHeight, 150);
+});
+
+window.addEventListener('orientationchange', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(setMobileHeight, 150);
+});
 
 function initializeGame() {
-    // Get references to the buttons and instructions
-    buttons = Array.from(document.querySelectorAll('.grid-button'));
-    instructions = document.getElementById('instructions');
-    winLine = document.getElementById('win-line');
-    resetButton = document.getElementById('reset');
-    modeSwitch = document.getElementById('mode-switch');
-    gameModeText = document.getElementById('game-mode');
-    difficultyContainer = document.getElementById('difficulty-container');
-    difficultySelect = document.getElementById('difficulty');
+    try {
+        // Get references to the buttons and instructions
+        buttons = Array.from(document.querySelectorAll('.grid-button'));
+        instructions = document.getElementById('instructions');
+        winLine = document.getElementById('win-line');
+        resetButton = document.getElementById('reset');
+        modeSwitch = document.getElementById('mode-switch');
+        gameModeText = document.getElementById('game-mode');
+        difficultyContainer = document.getElementById('difficulty-container');
+        difficultySelect = document.getElementById('difficulty');
 
-    // Initialize AI player
-    aiPlayer = new AIPlayer(difficultySelect ? difficultySelect.value : 'normal');
+        // Check if all required elements exist
+        if (!buttons.length || !instructions || !winLine || !resetButton ||
+            !modeSwitch || !gameModeText || !difficultyContainer || !difficultySelect) {
+            throw new Error('Required game elements not found');
+        }
+
+        // Remove inline onclick handler if it exists
+        modeSwitch.removeAttribute('onclick');
+
+        // Initialize AI player
+        aiPlayer = new AIPlayer(difficultySelect.value);
+
+        // Hide main content until everything is ready
+        document.body.style.visibility = 'visible';
+
+        return true;
+    } catch (error) {
+        console.error('Game initialization failed:', error);
+        document.body.innerHTML = '<div style="color: var(--text-primary); text-align: center; padding: 2rem;">Failed to initialize game. Please refresh the page.</div>';
+        return false;
+    }
 }
 
 function initializeEventListeners() {
-    if (!buttons || !resetButton || !modeSwitch || !difficultySelect) {
-        console.error('Required DOM elements not found');
-        return;
+    try {
+        // Verify elements exist before adding listeners
+        if (!buttons || !resetButton || !modeSwitch || !difficultySelect) {
+            throw new Error('Required elements not found for event listeners');
+        }
+
+        // Add event listeners
+        buttons.forEach(button => {
+            button.addEventListener('click', playerClick);
+            button.addEventListener('touchstart', handleTouchStart, { passive: true });
+        });
+
+        // Add reset button event listeners
+        resetButton.addEventListener('click', resetGame);
+        resetButton.addEventListener('touchstart', handleResetTouch, { passive: false });
+        resetButton.addEventListener('touchend', handleResetTouchEnd);
+
+        // Add mode switch button event listeners
+        modeSwitch.addEventListener('click', toggleGameMode);
+        modeSwitch.addEventListener('touchstart', handleModeSwitchTouch, { passive: false });
+        modeSwitch.addEventListener('touchend', handleModeSwitchTouchEnd);
+
+        // Add difficulty change listener
+        difficultySelect.addEventListener('change', handleDifficultyChange);
+
+        // Prevent double-tap zoom on mobile
+        document.addEventListener('touchend', preventZoom, { passive: true });
+    } catch (error) {
+        console.error('Failed to initialize event listeners:', error);
+        document.body.innerHTML = '<div style="color: var(--text-primary); text-align: center; padding: 2rem;">Failed to initialize game. Please refresh the page.</div>';
     }
-
-    // Add event listeners
-    buttons.forEach(button => {
-        button.addEventListener('click', playerClick);
-        button.addEventListener('touchstart', handleTouchStart, { passive: true });
-    });
-
-    // Add reset button event listeners
-    resetButton.addEventListener('click', resetGame);
-    resetButton.addEventListener('touchstart', handleResetTouch, { passive: false });
-    resetButton.addEventListener('touchend', handleResetTouchEnd);
-
-    // Add mode switch button event listeners
-    modeSwitch.addEventListener('click', toggleGameMode);
-    modeSwitch.addEventListener('touchstart', handleModeSwitchTouch, { passive: false });
-    modeSwitch.addEventListener('touchend', handleModeSwitchTouchEnd);
-
-    // Add difficulty change listener
-    difficultySelect.addEventListener('change', handleDifficultyChange);
-
-    // Prevent double-tap zoom on mobile
-    document.addEventListener('touchend', preventZoom, { passive: true });
 }
 
 // Function to handle difficulty change
 function handleDifficultyChange() {
-    if (isAIThinking) return;
+    if (!aiPlayer || isAIThinking || !difficultySelect) return;
     aiPlayer = new AIPlayer(difficultySelect.value);
     resetGame();
 }
 
 // Function to toggle game mode
 function toggleGameMode() {
-    if (isAIThinking) return; // Don't allow mode switch while AI is thinking
+    if (isAIThinking || !modeSwitch || !gameModeText || !difficultyContainer) return;
 
     isVsComputer = !isVsComputer;
     modeSwitch.textContent = isVsComputer ? 'vs Human' : 'vs Computer';
@@ -168,9 +202,6 @@ function handleDifficultyTouchEnd(event) {
     // Just remove active class, don't prevent default
     difficultySelect.classList.remove('active');
 }
-
-// Remove onclick from HTML since we're handling it in JavaScript
-modeSwitch.removeAttribute('onclick');
 
 // Function to handle button clicks
 function playerClick(event) {
