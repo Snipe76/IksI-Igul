@@ -614,7 +614,7 @@ footer p {
     font-size: clamp(0.85rem, 1.8vw, 1rem);
     font-weight: 600;
     margin-bottom: clamp(6px, 1vw, 8px);
-    text-align: left;
+    text-align: center;
     opacity: 0.9;
     letter-spacing: 0.5px;
 }
