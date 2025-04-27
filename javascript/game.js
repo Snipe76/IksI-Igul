@@ -67,11 +67,16 @@ function toggleGameMode() {
 
 // Touch event handlers
 function handleTouchStart(event) {
-    // Prevent any default touch behaviors
-    event.preventDefault();
+    if (!playingGame || isAIThinking) return;
 
-    // Trigger click event
-    event.target.click();
+    const button = event.target;
+    if (button.getAttribute('data-played') === 'true') {
+        event.preventDefault();
+        return;
+    }
+
+    event.preventDefault();
+    playerClick(event);
 }
 
 function handleResetTouch(event) {
@@ -114,6 +119,7 @@ function playerClick(event) {
     if (!playingGame || isAIThinking) return;
 
     const button = event.target;
+    if (button.getAttribute('data-played') === 'true') return;
 
     // Handle player move
     if (playerTurn % 2 === 0) {
@@ -132,16 +138,15 @@ function playerClick(event) {
 
 // Function to make a move
 function makeMove(button, player) {
-    if (button.textContent || !playingGame) return;
+    if (button.textContent || !playingGame || button.getAttribute('data-played') === 'true') return;
+
+    // Immediately mark as played to prevent double moves
+    button.setAttribute('data-played', 'true');
+    button.style.pointerEvents = 'none';
 
     button.innerHTML = `<span class='${player}'>${player}</span>`;
     button.classList.add(player);
     button.disabled = true;
-
-    if (isVsComputer && player === player2) {
-        // If it's the AI's move, completely disable interaction
-        button.style.pointerEvents = 'none';
-    }
 
     playerTurn++;
     updateInstructions();
