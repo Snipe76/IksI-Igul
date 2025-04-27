@@ -28,7 +28,7 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Body styles */
+/* Body styles with improved responsiveness */
 body {
     display: flex;
     flex-direction: column;
@@ -46,9 +46,8 @@ body {
     font-family: 'Segoe UI', Arial, sans-serif;
     padding: min(3vw, 15px);
     text-align: center;
-    overflow-x: hidden;
     width: 100%;
-    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* Fix for mobile Safari */
@@ -56,20 +55,19 @@ html {
     height: -webkit-fill-available;
 }
 
+/* Main container with improved scaling */
 main {
-    width: 100%;
-    max-width: 600px;
+    width: min(100%, 600px);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1.5rem;
-    border-radius: 20px;
+    padding: clamp(0.8rem, 3vw, 1.5rem);
+    border-radius: clamp(14px, 2vw, 20px);
     background: var(--secondary-bg);
     box-shadow: var(--game-shadow);
     position: relative;
     overflow: hidden;
-    box-sizing: border-box;
 }
 
 main::before {
@@ -83,25 +81,24 @@ main::before {
     opacity: 0.5;
 }
 
-/* Title styles */
+/* Title with responsive scaling */
 h1 {
-    margin-bottom: min(3vw, 20px);
-    font-size: clamp(2rem, 6vw, 3rem);
-    color: var(--text-primary);
     width: 100%;
+    margin-bottom: clamp(15px, 3vw, 20px);
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--text-primary);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     letter-spacing: 2px;
     font-weight: 800;
+    padding: 0 clamp(8px, 2vw, 15px);
 }
 
-/* Mode text styles */
+/* Mode text with improved scaling */
 .mode-text {
-    margin-bottom: min(3vw, 15px);
-    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-    color: var(--text-muted);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    width: 100%;
+    margin-bottom: clamp(12px, 2vw, 15px);
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    padding: 0 clamp(8px, 2vw, 15px);
 }
 
 .mode-text span {
@@ -118,14 +115,12 @@ h1 {
     background: rgba(125, 207, 255, 0.1);
 }
 
-/* Instructions styles */
+/* Instructions with consistent scaling */
 h2 {
-    margin-bottom: min(3vw, 20px);
-    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
-    color: var(--text-secondary);
     width: 100%;
-    transition: all 0.3s var(--animation-timing);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    margin-bottom: clamp(15px, 3vw, 20px);
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    padding: 0 clamp(8px, 2vw, 15px);
 }
 
 /* Player colors */
@@ -139,45 +134,38 @@ h2 {
     text-shadow: 0 0 15px rgba(122, 162, 247, 0.4);
 }
 
-/* Grid styles */
+/* Grid with responsive sizing */
 .grid {
+    width: min(100%, 400px);
+    aspect-ratio: 1;
+    gap: clamp(6px, 1.5vw, 8px);
+    margin: clamp(15px, 3vw, 20px) auto;
+    padding: clamp(8px, 2vw, 12px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: min(1.5vw, 8px);
-    width: min(80vw, 400px);
-    aspect-ratio: 1;
-    position: relative;
-    margin: min(3vw, 20px) auto;
-    padding: 12px;
     background: var(--primary-bg);
-    border-radius: 16px;
+    border-radius: clamp(12px, 2vw, 16px);
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
 }
 
-/* Button styles */
+/* Grid buttons with proper scaling */
 .grid-button {
     width: 100%;
     height: 100%;
     border: 2px solid var(--button-border);
     background: var(--button-bg);
     color: var(--text-primary);
-    font-size: clamp(2rem, 12vw, 4rem);
+    font-size: clamp(1.8rem, 8vw, 4rem);
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s var(--animation-timing);
-    padding: 0;
+    border-radius: clamp(6px, 1.5vw, 10px);
     display: flex;
     justify-content: center;
     align-items: center;
-    touch-action: manipulation;
-    min-width: 0;
-    min-height: 0;
+    transition: all 0.2s var(--animation-timing);
     position: relative;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .grid-button:hover:not(:disabled),
@@ -211,29 +199,33 @@ h2 {
     will-change: transform, opacity;
 }
 
-/* Game controls */
+/* Game controls with improved layout */
 .game-controls {
+    width: 100%;
     display: flex;
-    gap: min(3vw, 15px);
-    margin-top: min(3vw, 20px);
-    justify-content: center;
+    gap: clamp(10px, 2vw, 15px);
+    margin-top: clamp(15px, 3vw, 20px);
+    padding: 0 clamp(8px, 2vw, 15px);
 }
 
-/* Button styles */
+/* Control buttons with consistent sizing */
 #reset,
 #mode-switch {
-    padding: clamp(10px, 2vw, 14px) clamp(25px, 4vw, 35px);
+    flex: 1;
+    padding: clamp(10px, 2vw, 14px) clamp(20px, 3vw, 35px);
     font-size: clamp(0.9rem, 2vw, 1.1rem);
-    background: var(--button-bg);
-    color: var(--text-primary);
     border: none;
-    border-radius: 10px;
+    border-radius: clamp(8px, 1.5vw, 10px);
     cursor: pointer;
-    transition: all 0.3s var(--animation-timing);
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s var(--animation-timing);
+}
+
+#reset {
+    background: var(--button-bg);
+    color: var(--text-primary);
 }
 
 #reset:hover,
@@ -255,6 +247,7 @@ h2 {
     box-shadow: 0 8px 20px rgba(125, 207, 255, 0.3);
 }
 
+/* When in computer mode (showing "vs Human") */
 #mode-switch.vs-human {
     background: var(--human-mode);
 }
@@ -265,17 +258,14 @@ h2 {
     box-shadow: 0 8px 20px rgba(158, 206, 106, 0.3);
 }
 
-/* Footer styles */
+/* Footer with proper spacing */
 footer {
-    margin-top: min(3vw, 20px);
-    color: var(--text-muted);
+    width: min(100%, 600px);
+    margin-top: clamp(15px, 3vw, 20px);
+    padding: clamp(0.8rem, 2vw, 1rem);
     font-size: clamp(0.8rem, 1.8vw, 1rem);
-    width: 100%;
-    transition: opacity 0.3s ease;
-    text-align: center;
-    padding: 0.8rem;
+    border-radius: clamp(10px, 1.5vw, 12px);
     background: var(--secondary-bg);
-    border-radius: 10px;
     box-shadow: var(--game-shadow);
 }
 
@@ -530,447 +520,36 @@ footer p {
     }
 }
 
-/* Media queries for different screen sizes */
+/* Mobile-specific adjustments */
 @media screen and (max-width: 480px) {
-    body {
-        padding: 8px;
-    }
-
-    main {
-        padding: 0.8rem;
-        border-radius: 14px;
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .grid {
-        width: 100%;
-        padding: 8px;
-        gap: 6px;
-        max-width: none;
-    }
-
     .game-controls {
         flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        padding: 0 8px;
     }
 
     #reset,
     #mode-switch {
-        padding: 10px 20px;
         width: 100%;
-        max-width: none;
-        font-size: 1rem;
     }
 
-    h1 {
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
-        margin-bottom: 15px;
-        padding: 0 8px;
-    }
-
-    h2 {
-        font-size: clamp(1rem, 3vw, 1.4rem);
-        margin-bottom: 15px;
-        padding: 0 8px;
-    }
-
-    .mode-text {
-        font-size: clamp(0.8rem, 2vw, 1.1rem);
-        margin-bottom: 12px;
-        padding: 0 8px;
-    }
-
-    footer {
-        width: 100%;
-        padding: 0.8rem;
-        margin: 15px 0;
-        border-radius: 10px;
-        box-sizing: border-box;
-    }
-
-    /* Optimize touch interactions */
-    .grid-button:active:not(:disabled) {
-        transform: scale(0.95);
-        transition: all 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    /* Sync winner animations */
-    .winner.X {
-        animation: winPulseX 1.2s ease-in-out infinite;
-        box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
-    }
-
-    .winner.O {
-        animation: winPulseO 1.2s ease-in-out infinite;
-        box-shadow: 0 0 12px rgba(0, 0, 255, 0.4);
-    }
-
-    /* Optimize text animations */
-    .win-text {
-        animation-duration: 0.6s;
-    }
-
-    .win-text.X {
-        text-shadow: 0 0 15px rgba(255, 0, 0, 0.7),
-            0 0 30px rgba(255, 0, 0, 0.4);
-    }
-
-    .win-text.O {
-        text-shadow: 0 0 15px rgba(0, 0, 255, 0.7),
-            0 0 30px rgba(0, 0, 255, 0.4);
-    }
-
-    /* Optimize tie animations */
-    .tie {
-        animation: tieShakeJuicy 0.5s cubic-bezier(0.36, 0, 0.66, -0.56);
-    }
-
-    .tie-game .grid-button {
-        animation: tiePulseJuicy 1.4s ease infinite;
-        box-shadow: 0 0 12px rgba(102, 102, 102, 0.4);
-    }
-
-    .tie-text {
-        text-shadow: 0 0 15px rgba(255, 204, 0, 0.7),
-            0 0 30px rgba(255, 204, 0, 0.4);
-    }
-
-    /* Optimize celebration effects */
-    .win-celebration .grid {
-        animation: winCelebrationJuicy 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    /* Enhanced reset button for touch */
-    #reset {
-        padding: 12px 30px;
-        min-width: 120px;
-        min-height: 44px;
-        border-width: 2px;
-        margin-top: 20px;
-        font-size: 1.1rem;
-        transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    #reset:active,
-    #reset.active {
-        transform: scale(0.95);
-        background: #444444;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        transition: all 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    /* Optimize symbol animations */
     .grid-button span {
-        animation: popInJuicy 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    /* Mobile-optimized keyframes */
-    @keyframes winPulseX {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-        }
-
-        50% {
-            transform: scale(1.06);
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        100% {
-            transform: scale(1);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-        }
-    }
-
-    @keyframes winPulseO {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 0 15px rgba(0, 0, 255, 0.4);
-        }
-
-        50% {
-            transform: scale(1.06);
-            box-shadow: 0 0 30px rgba(0, 0, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        100% {
-            transform: scale(1);
-            box-shadow: 0 0 15px rgba(0, 0, 255, 0.4);
-        }
-    }
-
-    @keyframes winCelebrationJuicy {
-        0% {
-            transform: scale(0.97);
-            filter: brightness(0.9);
-        }
-
-        50% {
-            transform: scale(1.03);
-            filter: brightness(1.1);
-        }
-
-        75% {
-            transform: scale(0.99);
-            filter: brightness(1.05);
-        }
-
-        100% {
-            transform: scale(1);
-            filter: brightness(1);
-        }
-    }
-
-    @keyframes tieShakeJuicy {
-
-        0%,
-        100% {
-            transform: translateX(0) rotate(0);
-        }
-
-        20% {
-            transform: translateX(-6px) rotate(-1.5deg);
-        }
-
-        40% {
-            transform: translateX(6px) rotate(1.5deg);
-        }
-
-        60% {
-            transform: translateX(-4px) rotate(-1deg);
-        }
-
-        80% {
-            transform: translateX(4px) rotate(1deg);
-        }
-    }
-
-    @keyframes tiePulseJuicy {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 0 12px rgba(102, 102, 102, 0.4);
-        }
-
-        50% {
-            transform: scale(0.96);
-            box-shadow: 0 0 20px rgba(102, 102, 102, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.2);
-        }
-
-        100% {
-            transform: scale(1);
-            box-shadow: 0 0 12px rgba(102, 102, 102, 0.4);
-        }
-    }
-
-    .game-controls {
-        gap: 12px;
-    }
-
-    #reset,
-    #mode-switch {
-        padding: 12px 20px;
-        min-width: 110px;
-        min-height: 44px;
-        border-width: 2px;
-        font-size: 1rem;
-    }
-
-    #mode-switch {
-        min-height: 44px;
-        /* Minimum touch target size */
-        font-size: 1rem;
-    }
-
-    #mode-switch:active,
-    #mode-switch.active {
-        transform: scale(0.95);
-        transition: all 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        font-size: clamp(1.5rem, 8vw, 2.5rem);
     }
 }
 
+/* Tablet-specific adjustments */
 @media screen and (min-width: 481px) and (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    main {
-        width: 100%;
-        max-width: 100%;
-        padding: 1rem;
-        border-radius: 16px;
-        box-sizing: border-box;
-    }
-
-    .grid {
-        width: 100%;
-        max-width: none;
-        padding: 10px;
-        gap: 8px;
-    }
-
-    .grid-button {
-        border-radius: 8px;
-        font-size: clamp(2rem, 8vw, 3.5rem);
-    }
-
-    .game-controls {
-        width: 100%;
-        padding: 0 10px;
-        gap: 15px;
-    }
-
-    #reset,
-    #mode-switch {
-        width: 100%;
-        max-width: none;
-        padding: 12px 25px;
-    }
-
-    h1 {
-        padding: 0 10px;
-        font-size: clamp(2rem, 5vw, 2.8rem);
-    }
-
-    h2 {
-        padding: 0 10px;
-        font-size: clamp(1.1rem, 3.5vw, 1.5rem);
-    }
-
-    .mode-text {
-        padding: 0 10px;
-        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-    }
-
-    footer {
-        width: 100%;
-        padding: 1rem;
-        margin: 20px 0;
-        border-radius: 12px;
-        box-sizing: border-box;
-    }
-
-    /* Tablet-optimized animations */
-    .grid-button:active:not(:disabled) {
-        transform: scale(0.96);
-        transition: all 0.15s var(--animation-timing);
-    }
-
-    #reset:active,
-    #reset.active,
-    #mode-switch:active,
-    #mode-switch.active {
-        transform: scale(0.96);
-        transition: all 0.15s var(--animation-timing);
-    }
-
-    .winner.X,
-    .winner.O {
-        box-shadow: 0 0 20px currentColor;
+    .grid-button span {
+        font-size: clamp(2rem, 6vw, 3rem);
     }
 }
 
-/* Prevent animation flicker on mobile */
+/* Ensure animations work properly across devices */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
-    }
-}
-
-/* Win line styles */
-#win-line {
-    position: absolute;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* Tie game styles */
-.tie {
-    animation: tieShakeJuicy 0.6s cubic-bezier(0.36, 0, 0.66, -0.56);
-}
-
-.tie-game .grid-button {
-    animation: tiePulseJuicy 1.5s ease infinite;
-    background: rgba(224, 175, 104, 0.2) !important;
-    border-color: var(--tie-color) !important;
-    box-shadow: 0 0 20px rgba(224, 175, 104, 0.2);
-}
-
-@keyframes tieShakeJuicy {
-
-    0%,
-    100% {
-        transform: translateX(0) rotate(0);
-    }
-
-    20% {
-        transform: translateX(-8px) rotate(-2deg);
-    }
-
-    40% {
-        transform: translateX(8px) rotate(2deg);
-    }
-
-    60% {
-        transform: translateX(-5px) rotate(-1deg);
-    }
-
-    80% {
-        transform: translateX(5px) rotate(1deg);
-    }
-}
-
-@keyframes tiePulseJuicy {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 15px rgba(102, 102, 102, 0.4);
-    }
-
-    50% {
-        transform: scale(0.95);
-        box-shadow: 0 0 25px rgba(102, 102, 102, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2);
-    }
-
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 15px rgba(102, 102, 102, 0.4);
-    }
-}
-
-/* Instructions animation for tie */
-.tie-text {
-    display: inline-block;
-    font-weight: bold;
-    color: var(--tie-color);
-    text-shadow: 0 0 15px rgba(224, 175, 104, 0.4);
-    animation: tieTextJuicy 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    filter: brightness(1.2);
-}
-
-@keyframes tieTextJuicy {
-    0% {
-        transform: scale(0.5) translateY(-20px);
-        opacity: 0;
-        filter: blur(10px);
-    }
-
-    60% {
-        transform: scale(1.3);
-        filter: blur(0px);
-    }
-
-    80% {
-        transform: scale(0.95);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
     }
 }
 

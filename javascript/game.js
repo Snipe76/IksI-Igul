@@ -56,7 +56,7 @@ function toggleGameMode() {
 
     isVsComputer = !isVsComputer;
     modeSwitch.textContent = isVsComputer ? 'vs Human' : 'vs Computer';
-    modeSwitch.classList.toggle('vs-human', !isVsComputer);
+    modeSwitch.classList.toggle('vs-human', isVsComputer);
 
     // Update game mode text
     gameModeText.innerHTML = `Playing against: <span>${isVsComputer ? 'Computer' : 'Another Player'}</span>`;
