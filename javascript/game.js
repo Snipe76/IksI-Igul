@@ -49,8 +49,8 @@ function initializeGame() {
 
     // Add difficulty change listener
     difficultySelect.addEventListener('change', handleDifficultyChange);
-    difficultySelect.addEventListener('touchstart', handleDifficultyTouch, { passive: false });
-    difficultySelect.addEventListener('touchend', handleDifficultyTouchEnd);
+    difficultySelect.addEventListener('focus', handleDifficultyFocus);
+    difficultySelect.addEventListener('blur', handleDifficultyBlur);
 
     // Initialize AI player
     aiPlayer = new AIPlayer(difficultySelect.value);
@@ -60,10 +60,26 @@ function initializeGame() {
 }
 
 // Function to handle difficulty change
-function handleDifficultyChange() {
-    if (isAIThinking) return; // Don't allow difficulty change while AI is thinking
+function handleDifficultyChange(event) {
+    if (isAIThinking) {
+        event.preventDefault();
+        return;
+    }
     aiPlayer = new AIPlayer(difficultySelect.value);
     resetGame();
+}
+
+// Function to handle difficulty focus
+function handleDifficultyFocus() {
+    if (isAIThinking) return;
+    difficultySelect.style.backgroundColor = 'var(--button-hover)';
+    difficultySelect.style.borderColor = 'var(--text-secondary)';
+}
+
+// Function to handle difficulty blur
+function handleDifficultyBlur() {
+    difficultySelect.style.backgroundColor = '';
+    difficultySelect.style.borderColor = '';
 }
 
 // Function to toggle game mode
