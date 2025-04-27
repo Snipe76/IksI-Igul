@@ -23,14 +23,14 @@ body {
 /* Title styles */
 h1 {
     margin-bottom: 20px;
-    font-size: 3rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     color: #ffffff;
 }
 
 /* Instructions styles */
 h2 {
     margin-bottom: 30px;
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
     color: #bbbbbb;
 }
 
@@ -48,7 +48,7 @@ h2 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 5px;
+    gap: min(2vw, 5px);
     width: min(90vmin, 600px);
     aspect-ratio: 1;
     position: relative;
@@ -62,10 +62,20 @@ h2 {
     border: 2px solid #444444;
     background: #333333;
     color: #ffffff;
-    font-size: 4rem;
+    font-size: clamp(2rem, 10vmin, 4rem);
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.grid-button span {
+    line-height: 1;
 }
 
 .grid-button:hover:not(:disabled) {
@@ -110,8 +120,8 @@ h2 {
 
 /* Reset button styles */
 #reset {
-    padding: 10px 30px;
-    font-size: 1.2rem;
+    padding: clamp(8px, 2vw, 10px) clamp(20px, 4vw, 30px);
+    font-size: clamp(1rem, 3vw, 1.2rem);
     background: #333333;
     color: #ffffff;
     border: 2px solid #444444;
@@ -119,6 +129,8 @@ h2 {
     cursor: pointer;
     margin-top: 20px;
     transition: background-color 0.3s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #reset:hover {
@@ -129,6 +141,7 @@ h2 {
 footer {
     margin-top: 30px;
     color: #bbbbbb;
+    font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 /* Win line styles */
@@ -208,4 +221,24 @@ footer {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Media queries for very small screens */
+@media screen and (max-width: 320px) {
+    body {
+        padding: 10px;
+    }
+
+    .grid {
+        gap: 2px;
+        width: 95vmin;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
 }
