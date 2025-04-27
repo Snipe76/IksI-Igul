@@ -3,12 +3,17 @@ let playingGame = true;
 let playerTurn = 0;
 const player1 = 'X';
 const player2 = 'O';
+let isVsComputer = false;
+let aiPlayer = null;
+let isAIThinking = false;
 
 // Game elements
 let buttons;
 let instructions;
 let winLine;
 let resetButton;
+let modeSwitch;
+let gameModeText;
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', initializeGame);
@@ -19,6 +24,8 @@ function initializeGame() {
     instructions = document.getElementById('instructions');
     winLine = document.getElementById('win-line');
     resetButton = document.getElementById('reset');
+    modeSwitch = document.getElementById('mode-switch');
+    gameModeText = document.getElementById('game-mode');
 
     // Add event listeners
     buttons.forEach(button => {
@@ -31,8 +38,24 @@ function initializeGame() {
     resetButton.addEventListener('touchstart', handleResetTouch, { passive: false });
     resetButton.addEventListener('touchend', handleResetTouchEnd);
 
+    // Initialize AI player
+    aiPlayer = new AIPlayer('normal');
+
     // Prevent double-tap zoom on mobile
     document.addEventListener('touchend', preventZoom);
+}
+
+// Function to toggle game mode
+function toggleGameMode() {
+    isVsComputer = !isVsComputer;
+    modeSwitch.textContent = isVsComputer ? 'vs Human' : 'vs Computer';
+    modeSwitch.classList.toggle('vs-human', !isVsComputer);
+
+    // Update game mode text
+    gameModeText.innerHTML = `Playing against: <span>${isVsComputer ? 'Computer' : 'Another Player'}</span>`;
+    gameModeText.classList.toggle('vs-computer', isVsComputer);
+
+    resetGame();
 }
 
 // Touch event handlers
@@ -62,86 +85,100 @@ function preventZoom(event) {
     }
 }
 
-// Function to trigger confetti
-function celebrateWin(winnerClass) {
-    const colors = winnerClass === 'X' ? ['#ff0000'] : ['#0000ff'];
+// Function to handle button clicks
+function playerClick(event) {
+    if (!playingGame || isAIThinking) return;
 
-    // Check if device is mobile
-    const isMobile = window.innerWidth <= 768;
+    const button = event.target;
 
-    // Configure confetti based on device
-    const config = {
-        particleCount: isMobile ? 100 : 400,
-        spread: isMobile ? 200 : 200,
-        startVelocity: isMobile ? 30 : 60,
-        gravity: 0.8,
-        scalar: isMobile ? 0.7 : 1,
-        disableForReducedMotion: true,
-        colors: colors
-    };
+    // Handle player move
+    if (playerTurn % 2 === 0) {
+        makeMove(button, player1);
 
-    try {
-        // Single burst for mobile, three bursts for desktop
-        if (isMobile) {
-            // Center burst for mobile
-            confetti({
-                ...config,
-                origin: { x: 0.5, y: 0.6 }
-            });
-        } else {
-            let burstCount = 0;
-            const maxBursts = 2;
-            const burstInterval = 300; // Time between bursts in ms
-
-            const fireBurst = () => {
-                if (burstCount < maxBursts) {
-                    // Left side burst
-                    confetti({
-                        ...config,
-                        angle: 60,
-                        origin: { x: 0, y: 0.7 }
-                    });
-
-                    // Right side burst
-                    confetti({
-                        ...config,
-                        angle: 120,
-                        origin: { x: 1, y: 0.7 }
-                    });
-
-                    burstCount++;
-                    if (burstCount < maxBursts) {
-                        setTimeout(fireBurst, burstInterval);
-                    }
-                }
-            };
-
-            fireBurst();
+        // If vs computer and game is still going, make AI move
+        if (isVsComputer && playingGame) {
+            isAIThinking = true;
+            disableAllButtons(true);
+            setTimeout(makeAIMove, 500); // Add delay for better UX
         }
-    } catch (error) {
-        console.error('Confetti error:', error);
+    } else if (!isVsComputer) {
+        makeMove(button, player2);
     }
 }
 
-// Function to handle button clicks
-function playerClick(event) {
-    if (!playingGame) return;
+// Function to make a move
+function makeMove(button, player) {
+    if (button.textContent || !playingGame) return;
 
-    const button = event.target;
-    if (playerTurn % 2 === 0) {
-        button.innerHTML = `<span class='X'>${player1}</span>`;
-        button.classList.add('X');
-        button.disabled = true;
-        instructions.innerHTML = "<span class='O'>O</span>'s turn";
-    } else {
-        button.innerHTML = `<span class='O'>${player2}</span>`;
-        button.classList.add('O');
-        button.disabled = true;
-        instructions.innerHTML = "<span class='X'>X</span>'s turn";
-    }
+    button.innerHTML = `<span class='${player}'>${player}</span>`;
+    button.classList.add(player);
+    button.disabled = true;
 
     playerTurn++;
+    updateInstructions();
     checkWinner();
+}
+
+// Function to make AI move
+function makeAIMove() {
+    if (!playingGame) {
+        isAIThinking = false;
+        disableAllButtons(false);
+        return;
+    }
+
+    // Get current game state
+    const gameState = buttons.map(button => {
+        if (!button.textContent) return null;
+        return button.textContent;
+    });
+
+    // Get AI's move
+    const aiMove = aiPlayer.getBestMove(gameState);
+
+    if (aiMove !== null) {
+        makeMove(buttons[aiMove], player2);
+    }
+
+    isAIThinking = false;
+    disableAllButtons(false);
+}
+
+// Function to disable/enable all buttons
+function disableAllButtons(disable) {
+    buttons.forEach(button => {
+        if (!button.textContent) { // Only affect empty buttons
+            button.disabled = disable;
+            button.style.cursor = disable ? 'not-allowed' : 'pointer';
+        }
+    });
+
+    // Also disable mode switch and reset during AI turn
+    modeSwitch.disabled = disable;
+    resetButton.disabled = disable;
+
+    if (disable) {
+        modeSwitch.style.opacity = '0.7';
+        resetButton.style.opacity = '0.7';
+    } else {
+        modeSwitch.style.opacity = '1';
+        resetButton.style.opacity = '1';
+    }
+}
+
+// Function to update instructions
+function updateInstructions() {
+    if (!playingGame) return;
+
+    if (isVsComputer) {
+        instructions.innerHTML = playerTurn % 2 === 0 ?
+            "<span class='X'>Your turn</span>" :
+            "<span class='O'>Computer thinking...</span>";
+    } else {
+        instructions.innerHTML = playerTurn % 2 === 0 ?
+            "<span class='X'>X</span>'s turn" :
+            "<span class='O'>O</span>'s turn";
+    }
 }
 
 // Function to handle tie game
@@ -249,11 +286,15 @@ function checkWinner() {
 function resetGame() {
     if (!buttons) return; // Safety check
 
+    isAIThinking = false;
+    disableAllButtons(false);
+
     buttons.forEach(button => {
         button.innerHTML = '';
         button.disabled = false;
         button.style.pointerEvents = 'auto';
         button.style.opacity = '1';
+        button.style.cursor = 'pointer';
         button.classList.remove('X', 'O', 'winner');
     });
 
@@ -263,14 +304,75 @@ function resetGame() {
         winLine.className = '';
     }
 
-    // Remove celebration classes
+    // Remove tie game classes
     const gridElement = document.querySelector('.grid');
-    gridElement.classList.remove('tie', 'tie-game', 'win-celebration');
+    gridElement.classList.remove('tie', 'tie-game');
 
     playingGame = true;
     playerTurn = 0;
 
     if (instructions) {
         instructions.innerHTML = "<span class='X'>X</span> starts the game";
+    }
+}
+
+// Function to trigger confetti
+function celebrateWin(winnerClass) {
+    const colors = winnerClass === 'X' ? ['#ff0000'] : ['#0000ff'];
+
+    // Check if device is mobile
+    const isMobile = window.innerWidth <= 768;
+
+    // Configure confetti based on device
+    const config = {
+        particleCount: isMobile ? 100 : 400,
+        spread: isMobile ? 200 : 200,
+        startVelocity: isMobile ? 30 : 60,
+        gravity: 0.8,
+        scalar: isMobile ? 0.7 : 1,
+        disableForReducedMotion: true,
+        colors: colors
+    };
+
+    try {
+        // Single burst for mobile, three bursts for desktop
+        if (isMobile) {
+            // Center burst for mobile
+            confetti({
+                ...config,
+                origin: { x: 0.5, y: 0.6 }
+            });
+        } else {
+            let burstCount = 0;
+            const maxBursts = 2;
+            const burstInterval = 300; // Time between bursts in ms
+
+            const fireBurst = () => {
+                if (burstCount < maxBursts) {
+                    // Left side burst
+                    confetti({
+                        ...config,
+                        angle: 60,
+                        origin: { x: 0, y: 0.7 }
+                    });
+
+                    // Right side burst
+                    confetti({
+                        ...config,
+                        angle: 120,
+                        origin: { x: 1, y: 0.7 }
+                    });
+
+                    burstCount++;
+                    if (burstCount < maxBursts) {
+                        setTimeout(fireBurst, burstInterval);
+                    }
+                }
+            };
+
+            fireBurst();
+        }
+    } catch (error) {
+        console.error('Confetti error:', error);
     }
 }
