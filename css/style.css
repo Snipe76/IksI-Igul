@@ -48,11 +48,12 @@ h2 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: min(2vw, 5px);
-    width: min(90vmin, 600px);
+    gap: min(1.5vw, 5px);
+    width: min(85vw, 500px);
     aspect-ratio: 1;
     position: relative;
     margin: 20px auto;
+    padding: 0;
 }
 
 /* Button styles */
@@ -62,7 +63,7 @@ h2 {
     border: 2px solid #444444;
     background: #333333;
     color: #ffffff;
-    font-size: clamp(2rem, 10vmin, 4rem);
+    font-size: min(15vw, 4rem);
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -72,10 +73,22 @@ h2 {
     align-items: center;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
 }
 
 .grid-button span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
     line-height: 1;
+    width: auto;
+    height: auto;
+    animation: bounceIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center center;
 }
 
 .grid-button:hover:not(:disabled) {
@@ -87,28 +100,15 @@ h2 {
 }
 
 /* Animation for button text */
-.grid-button span {
-    display: inline-block;
-    animation: bounceIn 0.5s ease;
-}
-
 @keyframes bounceIn {
     0% {
-        transform: scale(0.3);
         opacity: 0;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-
-    70% {
-        transform: scale(0.9);
+        transform: translate(-50%, -50%) scale(0.5);
     }
 
     100% {
-        transform: scale(1);
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
@@ -223,22 +223,47 @@ footer {
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Media queries for very small screens */
-@media screen and (max-width: 320px) {
+/* Media queries for mobile devices */
+@media screen and (max-width: 480px) {
     body {
         padding: 10px;
     }
 
     .grid {
-        gap: 2px;
-        width: 95vmin;
+        width: 95vw;
+        gap: 3px;
+        margin: 10px auto;
+    }
+
+    .grid-button {
+        border-width: 1px;
     }
 
     h1 {
+        font-size: 2rem;
         margin-bottom: 10px;
     }
 
     h2 {
+        font-size: 1.2rem;
         margin-bottom: 15px;
     }
+
+    #reset {
+        padding: 8px 20px;
+        font-size: 1rem;
+        margin-top: 15px;
+    }
+
+    footer {
+        margin-top: 20px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Ensure the win line doesn't affect grid layout */
+#win-line {
+    position: absolute;
+    pointer-events: none;
+    z-index: 10;
 }
