@@ -41,7 +41,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    min-height: 100dvh;
+    /* Fallback for browsers that don't support custom properties */
+    min-height: calc(var(--vh, 1vh) * 100);
     margin: 0;
     background-color: var(--primary-bg);
     background-image:
@@ -59,7 +60,7 @@ body {
 /* Main container with improved scaling */
 main {
     width: min(100%, 600px);
-    margin: 0 auto;
+    margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

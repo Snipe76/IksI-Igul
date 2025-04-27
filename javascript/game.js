@@ -20,6 +20,18 @@ let difficultySelect;
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', initializeGame);
 
+// Handle mobile viewport height
+function setMobileHeight() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+}
+
+// Initial setup
+setMobileHeight();
+
+// Update on resize and orientation change
+window.addEventListener('resize', setMobileHeight);
+window.addEventListener('orientationchange', setMobileHeight);
+
 function initializeGame() {
     // Get references to the buttons and instructions
     buttons = Array.from(document.querySelectorAll('.grid-button'));
