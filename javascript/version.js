@@ -54,5 +54,4 @@ async function initializeVersion() {
 document.addEventListener('DOMContentLoaded', initializeVersion);
 
 // Export version info for potential use in other scripts
-window.versionInfo = versionInfo;
-document.addEventListener('DOMContentLoaded', updateVersion); 
+window.versionInfo = versionInfo; 

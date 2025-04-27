@@ -18,7 +18,10 @@ let difficultyContainer;
 let difficultySelect;
 
 // Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', initializeGame);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeGame();
+    initializeEventListeners();
+});
 
 // Handle mobile viewport height
 function setMobileHeight() {
@@ -43,6 +46,16 @@ function initializeGame() {
     difficultyContainer = document.getElementById('difficulty-container');
     difficultySelect = document.getElementById('difficulty');
 
+    // Initialize AI player
+    aiPlayer = new AIPlayer(difficultySelect ? difficultySelect.value : 'normal');
+}
+
+function initializeEventListeners() {
+    if (!buttons || !resetButton || !modeSwitch || !difficultySelect) {
+        console.error('Required DOM elements not found');
+        return;
+    }
+
     // Add event listeners
     buttons.forEach(button => {
         button.addEventListener('click', playerClick);
@@ -61,9 +74,6 @@ function initializeGame() {
 
     // Add difficulty change listener
     difficultySelect.addEventListener('change', handleDifficultyChange);
-
-    // Initialize AI player
-    aiPlayer = new AIPlayer(difficultySelect.value);
 
     // Prevent double-tap zoom on mobile
     document.addEventListener('touchend', preventZoom, { passive: true });
