@@ -206,21 +206,31 @@ function checkWinner() {
             btnA.textContent === btnC.textContent) {
 
             playingGame = false;
-            instructions.innerHTML = `<span class='${btnA.textContent}'>${btnA.textContent}</span> wins!`;
 
+            // Add win celebration class to grid
+            const gridElement = document.querySelector('.grid');
+            gridElement.classList.add('win-celebration');
+
+            // Update instructions with animated win message
+            instructions.innerHTML = `<span class='win-text ${btnA.textContent}'>${btnA.textContent} wins!</span>`;
+
+            // Add winner class and player class to winning cells
             [btnA, btnB, btnC].forEach(button => {
-                button.classList.add('winner');
+                button.classList.add('winner', btnA.textContent);
                 button.style.pointerEvents = 'none';
             });
 
-            // Show the win line
-            winLine.className = winLineClasses[i];
-            winLine.style.display = 'block';
+            // Show the win line with a slight delay for better animation timing
+            setTimeout(() => {
+                winLine.className = winLineClasses[i];
+                winLine.style.display = 'block';
+            }, 200);
 
             // Disable all buttons
             buttons.forEach(button => {
+                button.disabled = true;
                 if (!button.classList.contains('winner')) {
-                    button.disabled = true;
+                    button.style.opacity = '0.7';
                 }
             });
 
@@ -243,6 +253,7 @@ function resetGame() {
         button.innerHTML = '';
         button.disabled = false;
         button.style.pointerEvents = 'auto';
+        button.style.opacity = '1';
         button.classList.remove('X', 'O', 'winner');
     });
 
@@ -252,9 +263,9 @@ function resetGame() {
         winLine.className = '';
     }
 
-    // Remove tie game classes
+    // Remove celebration classes
     const gridElement = document.querySelector('.grid');
-    gridElement.classList.remove('tie', 'tie-game');
+    gridElement.classList.remove('tie', 'tie-game', 'win-celebration');
 
     playingGame = true;
     playerTurn = 0;
