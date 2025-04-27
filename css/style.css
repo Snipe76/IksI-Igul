@@ -590,3 +590,85 @@ footer p {
     outline-offset: 2px;
     z-index: 1;
 }
+
+/* Difficulty selector */
+.difficulty-container {
+    width: 100%;
+    margin-bottom: clamp(12px, 2vw, 15px);
+    padding: 0 clamp(8px, 2vw, 15px);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s var(--animation-timing);
+}
+
+.difficulty-container.visible {
+    opacity: 1;
+    height: clamp(85px, 14vw, 100px);
+    margin-top: clamp(8px, 1.5vw, 12px);
+}
+
+.difficulty-title {
+    color: var(--text-secondary);
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    font-weight: 600;
+    margin-bottom: clamp(6px, 1vw, 8px);
+    text-align: left;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
+
+.difficulty-select {
+    width: 100%;
+    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 16px);
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    color: var(--text-primary);
+    background: var(--button-bg);
+    border: 2px solid var(--button-border);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: all 0.2s var(--animation-timing);
+    height: clamp(45px, 8vw, 60px);
+}
+
+.difficulty-select:hover,
+.difficulty-select:focus-visible {
+    background: var(--button-hover);
+    border-color: var(--text-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.difficulty-select:focus-visible {
+    outline: 3px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
+/* Custom dropdown arrow */
+.difficulty-container::after {
+    content: '';
+    position: absolute;
+    right: clamp(20px, 4vw, 30px);
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--text-primary);
+    pointer-events: none;
+    transform: translateY(-50%);
+    opacity: 0.8;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 480px) {
+    .difficulty-title {
+        text-align: center;
+        margin-bottom: clamp(8px, 1.5vw, 10px);
+    }
+}

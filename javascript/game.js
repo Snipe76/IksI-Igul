@@ -14,6 +14,8 @@ let winLine;
 let resetButton;
 let modeSwitch;
 let gameModeText;
+let difficultyContainer;
+let difficultySelect;
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', initializeGame);
@@ -26,6 +28,8 @@ function initializeGame() {
     resetButton = document.getElementById('reset');
     modeSwitch = document.getElementById('mode-switch');
     gameModeText = document.getElementById('game-mode');
+    difficultyContainer = document.getElementById('difficulty-container');
+    difficultySelect = document.getElementById('difficulty');
 
     // Add event listeners
     buttons.forEach(button => {
@@ -43,11 +47,21 @@ function initializeGame() {
     modeSwitch.addEventListener('touchstart', handleModeSwitchTouch, { passive: false });
     modeSwitch.addEventListener('touchend', handleModeSwitchTouchEnd);
 
+    // Add difficulty change listener
+    difficultySelect.addEventListener('change', handleDifficultyChange);
+
     // Initialize AI player
-    aiPlayer = new AIPlayer('normal');
+    aiPlayer = new AIPlayer(difficultySelect.value);
 
     // Prevent double-tap zoom on mobile
     document.addEventListener('touchend', preventZoom);
+}
+
+// Function to handle difficulty change
+function handleDifficultyChange() {
+    if (isAIThinking) return; // Don't allow difficulty change while AI is thinking
+    aiPlayer = new AIPlayer(difficultySelect.value);
+    resetGame();
 }
 
 // Function to toggle game mode
@@ -57,6 +71,9 @@ function toggleGameMode() {
     isVsComputer = !isVsComputer;
     modeSwitch.textContent = isVsComputer ? 'vs Human' : 'vs Computer';
     modeSwitch.classList.toggle('vs-human', isVsComputer);
+
+    // Show/hide difficulty selector
+    difficultyContainer.classList.toggle('visible', isVsComputer);
 
     // Update game mode text
     gameModeText.innerHTML = `Playing against: <span>${isVsComputer ? 'Computer' : 'Another Player'}</span>`;
@@ -182,15 +199,18 @@ function makeAIMove() {
 function disableAllButtons(disable) {
     disablePlayButtons(disable);
 
-    // Also disable mode switch and reset during AI turn only
+    // Also disable mode switch, difficulty select, and reset during AI turn only
     modeSwitch.disabled = disable;
+    difficultySelect.disabled = disable;
     resetButton.disabled = disable;
 
     if (disable) {
         modeSwitch.style.opacity = '0.7';
+        difficultySelect.style.opacity = '0.7';
         resetButton.style.opacity = '0.7';
     } else {
         modeSwitch.style.opacity = '1';
+        difficultySelect.style.opacity = '1';
         resetButton.style.opacity = '1';
     }
 }
