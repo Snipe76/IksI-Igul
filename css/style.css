@@ -77,9 +77,11 @@ main::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 10px;
     background: linear-gradient(90deg, var(--x-color), var(--o-color));
     opacity: 0.5;
+    border-top-left-radius: clamp(14px, 2vw, 20px);
+    border-top-right-radius: clamp(14px, 2vw, 20px);
 }
 
 /* Title with responsive scaling */
