@@ -49,37 +49,19 @@ function initializeGame() {
 
     // Add difficulty change listener
     difficultySelect.addEventListener('change', handleDifficultyChange);
-    difficultySelect.addEventListener('focus', handleDifficultyFocus);
-    difficultySelect.addEventListener('blur', handleDifficultyBlur);
 
     // Initialize AI player
     aiPlayer = new AIPlayer(difficultySelect.value);
 
     // Prevent double-tap zoom on mobile
-    document.addEventListener('touchend', preventZoom);
+    document.addEventListener('touchend', preventZoom, { passive: true });
 }
 
 // Function to handle difficulty change
-function handleDifficultyChange(event) {
-    if (isAIThinking) {
-        event.preventDefault();
-        return;
-    }
+function handleDifficultyChange() {
+    if (isAIThinking) return;
     aiPlayer = new AIPlayer(difficultySelect.value);
     resetGame();
-}
-
-// Function to handle difficulty focus
-function handleDifficultyFocus() {
-    if (isAIThinking) return;
-    difficultySelect.style.backgroundColor = 'var(--button-hover)';
-    difficultySelect.style.borderColor = 'var(--text-secondary)';
-}
-
-// Function to handle difficulty blur
-function handleDifficultyBlur() {
-    difficultySelect.style.backgroundColor = '';
-    difficultySelect.style.borderColor = '';
 }
 
 // Function to toggle game mode

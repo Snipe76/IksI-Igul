@@ -30,9 +30,8 @@
 
 /* Fix for mobile Safari */
 html {
-    height: -webkit-fill-available;
+    height: 100%;
     overflow-x: hidden;
-    overflow-y: auto;
 }
 
 /* Body styles with improved responsiveness */
@@ -42,7 +41,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
     margin: 0;
     background-color: var(--primary-bg);
     background-image:
@@ -51,21 +50,16 @@ body {
     background-blend-mode: overlay;
     color: var(--text-primary);
     font-family: 'Segoe UI', Arial, sans-serif;
-    padding: 0;
+    padding: min(3vw, 15px);
     text-align: center;
     width: 100%;
     overflow-x: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 /* Main container with improved scaling */
 main {
     width: min(100%, 600px);
-    margin: auto;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -603,13 +597,13 @@ footer p {
     opacity: 0;
     height: 0;
     overflow: hidden;
-    transition: opacity 0.3s var(--animation-timing);
+    transition: all 0.3s var(--animation-timing);
     position: relative;
 }
 
 .difficulty-container.visible {
     opacity: 1;
-    height: auto;
+    height: clamp(85px, 14vw, 100px);
     margin-top: clamp(8px, 1.5vw, 12px);
 }
 
@@ -625,7 +619,7 @@ footer p {
 
 .difficulty-select {
     width: 100%;
-    padding: clamp(8px, 1.5vw, 12px);
+    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 16px);
     font-size: 16px;
     color: var(--text-primary);
     background: var(--button-bg);
@@ -634,7 +628,7 @@ footer p {
     cursor: pointer;
     font-family: inherit;
     font-weight: 600;
-    text-align-last: center;
+    text-align: center;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -644,6 +638,17 @@ footer p {
     -webkit-tap-highlight-color: transparent;
     position: relative;
     z-index: 2;
+}
+
+.difficulty-select:hover,
+.difficulty-select:focus {
+    background: var(--button-hover);
+    border-color: var(--text-secondary);
+    outline: none;
+}
+
+.difficulty-select:active {
+    transform: translateY(1px);
 }
 
 /* Custom dropdown arrow */
@@ -675,6 +680,11 @@ footer p {
 
 /* Mobile adjustments */
 @media screen and (max-width: 480px) {
+    .difficulty-title {
+        text-align: center;
+        margin-bottom: clamp(8px, 1.5vw, 10px);
+    }
+
     .difficulty-select {
         padding-right: 35px;
     }
