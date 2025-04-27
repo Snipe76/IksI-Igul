@@ -144,6 +144,43 @@ function playerClick(event) {
     checkWinner();
 }
 
+// Function to handle tie game
+function handleTie() {
+    playingGame = false;
+
+    // Add tie game class to grid for animation
+    const gridElement = document.querySelector('.grid');
+    gridElement.classList.add('tie');
+
+    // Add tie game class to all buttons
+    buttons.forEach(button => {
+        button.disabled = true;
+        button.style.pointerEvents = 'none';
+    });
+
+    // Update instructions with animated text
+    instructions.innerHTML = '<span class="tie-text">It\'s a tie!</span>';
+
+    // Add tie game class after initial shake animation
+    setTimeout(() => {
+        gridElement.classList.remove('tie');
+        gridElement.classList.add('tie-game');
+
+        // Trigger special tie game confetti
+        try {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ffcc00', '#ffffff', '#666666'],
+                gravity: 1.2
+            });
+        } catch (error) {
+            console.error('Confetti error:', error);
+        }
+    }, 500);
+}
+
 // Function to check for a winner
 function checkWinner() {
     const winningCombos = [
@@ -194,8 +231,7 @@ function checkWinner() {
     }
 
     if (playerTurn === 9 && playingGame) {
-        playingGame = false;
-        instructions.textContent = 'It\'s a tie!';
+        handleTie();
     }
 }
 
@@ -215,6 +251,10 @@ function resetGame() {
         winLine.style.display = 'none';
         winLine.className = '';
     }
+
+    // Remove tie game classes
+    const gridElement = document.querySelector('.grid');
+    gridElement.classList.remove('tie', 'tie-game');
 
     playingGame = true;
     playerTurn = 0;
