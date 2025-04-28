@@ -1,8 +1,11 @@
+import { GAME_CONFIG } from '../core/config.js';
+
 export class UIController {
     constructor(gameEngine) {
         this.gameEngine = gameEngine;
         this.initializeElements();
         this.initializeEventListeners();
+        this.updateInitialUI();
     }
 
     initializeElements() {
@@ -22,7 +25,7 @@ export class UIController {
     }
 
     validateElements() {
-        return this.buttons.length &&
+        return this.buttons.length === GAME_CONFIG.BOARD.TOTAL_CELLS &&
             this.instructions &&
             this.winLine &&
             this.resetButton &&
@@ -33,12 +36,27 @@ export class UIController {
     }
 
     initializeEventListeners() {
-        // Grid buttons
+        this.initializeGridButtons();
+        this.initializeControlButtons();
+        this.initializeDifficultySelect();
+        this.preventMobileZoom();
+    }
+
+    updateInitialUI() {
+        // Set initial state of mode UI
+        const gameState = this.gameEngine.getGameState();
+        this.updateGameModeUI(gameState.gameMode);
+        this.updateInstructions();
+    }
+
+    initializeGridButtons() {
         this.buttons.forEach(button => {
             button.addEventListener('click', (e) => this.handlePlayerClick(e));
             button.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: true });
         });
+    }
 
+    initializeControlButtons() {
         // Reset button
         this.resetButton.addEventListener('click', () => this.handleReset());
         this.resetButton.addEventListener('touchstart', (e) => this.handleResetTouch(e), { passive: false });
@@ -48,34 +66,36 @@ export class UIController {
         this.modeSwitch.addEventListener('click', () => this.handleModeSwitch());
         this.modeSwitch.addEventListener('touchstart', (e) => this.handleModeSwitchTouch(e), { passive: false });
         this.modeSwitch.addEventListener('touchend', (e) => this.handleModeSwitchTouchEnd(e));
+    }
 
-        // Difficulty select
+    initializeDifficultySelect() {
         this.difficultySelect.addEventListener('change', () => this.handleDifficultyChange());
+    }
 
-        // Prevent zoom on mobile
+    preventMobileZoom() {
         document.addEventListener('touchend', (e) => this.preventZoom(e), { passive: true });
     }
 
     handlePlayerClick(event) {
-        const button = event.target;
+        const button = event.currentTarget;
         const index = parseInt(button.dataset.index, 10);
         const gameState = this.gameEngine.getGameState();
 
-        // Don't allow moves if:
-        // - Game is not active
-        // - AI is thinking
-        // - Button is already played
-        // - Invalid index
-        // - It's computer mode and it's not player's turn (O's turn)
-        if (!gameState.playingGame ||
-            gameState.isAIThinking ||
-            button.getAttribute('data-played') === 'true' ||
-            isNaN(index) || index < 0 || index > 8 ||
-            (gameState.isVsComputer && gameState.currentPlayer === 'O')) {
+        if (!this.isValidPlayerMove(gameState, button, index)) {
             return;
         }
 
         this.makeMove(button, index);
+    }
+
+    isValidPlayerMove(gameState, button, index) {
+        return gameState.playingGame &&
+            !gameState.isAIThinking &&
+            button.getAttribute('data-played') !== 'true' &&
+            !isNaN(index) &&
+            index >= 0 &&
+            index < GAME_CONFIG.BOARD.TOTAL_CELLS &&
+            !(gameState.isVsComputer && gameState.currentPlayer === GAME_CONFIG.PLAYERS.O);
     }
 
     makeMove(button, index) {
@@ -86,19 +106,18 @@ export class UIController {
             this.updateButton(button, currentPlayer);
             this.checkGameEnd();
 
-            // Only trigger AI turn if:
-            // - Game is vs computer
-            // - Game is still active
-            // - Game is not over
-            // - Current player is O (AI's turn)
             const newState = this.gameEngine.getGameState();
-            if (newState.isVsComputer &&
-                this.gameEngine.playingGame &&
-                !this.gameEngine.isGameOver &&
-                newState.currentPlayer === 'O') {
+            if (this.shouldTriggerAIMove(newState)) {
                 this.handleAITurn();
             }
         }
+    }
+
+    shouldTriggerAIMove(gameState) {
+        return gameState.isVsComputer &&
+            this.gameEngine.playingGame &&
+            !this.gameEngine.isGameOver &&
+            gameState.currentPlayer === GAME_CONFIG.PLAYERS.O;
     }
 
     updateButton(button, player) {
@@ -110,16 +129,8 @@ export class UIController {
     }
 
     handleAITurn() {
-        // Don't make AI move if:
-        // - Game is over
-        // - AI is already thinking
-        // - It's not computer mode
-        // - It's not O's turn
         const gameState = this.gameEngine.getGameState();
-        if (this.gameEngine.isGameOver ||
-            this.gameEngine.isAIThinking ||
-            !gameState.isVsComputer ||
-            gameState.currentPlayer !== 'O') {
+        if (!this.isValidAIMove(gameState)) {
             return;
         }
 
@@ -127,17 +138,37 @@ export class UIController {
         this.disableAllButtons(true);
         this.updateInstructions();
 
+        // Use setTimeout to give visual feedback that AI is thinking
         setTimeout(() => {
-            const aiMove = this.gameEngine.aiPlayer.getBestMove(this.gameEngine);
+            this.processAIMove();
+        }, GAME_CONFIG.AI.MOVE_DELAY);
+    }
 
-            if (aiMove !== null && !this.gameEngine.isGameOver) {
-                this.makeMove(this.buttons[aiMove], aiMove);
-            }
+    isValidAIMove(gameState) {
+        return !this.gameEngine.isGameOver &&
+            !this.gameEngine.isAIThinking &&
+            gameState.isVsComputer &&
+            gameState.currentPlayer === GAME_CONFIG.PLAYERS.O;
+    }
 
+    processAIMove() {
+        if (!this.gameEngine.aiPlayer) {
+            console.error('AI player not initialized');
             this.gameEngine.isAIThinking = false;
             this.disableAllButtons(false);
-            this.updateInstructions();
-        }, 500);
+            return;
+        }
+
+        const aiMove = this.gameEngine.aiPlayer.getBestMove(this.gameEngine);
+
+        if (aiMove !== null && !this.gameEngine.isGameOver) {
+            const button = this.buttons[aiMove];
+            this.makeMove(button, aiMove);
+        }
+
+        this.gameEngine.isAIThinking = false;
+        this.disableAllButtons(false);
+        this.updateInstructions();
     }
 
     checkGameEnd() {
@@ -148,48 +179,40 @@ export class UIController {
             return;
         }
 
-        if (!result.winner) {
-            this.handleTie();
-        } else {
-            this.handleWin({
-                winner: result.winner,
-                combo: result.winningLine
-            });
-        }
+        result.winner ? this.handleWin(result) : this.handleTie();
     }
 
     handleWin(result) {
         this.gameEngine.playingGame = false;
-        this.gridElement.classList.add('win-celebration');
+        this.gridElement.classList.add(GAME_CONFIG.UI.CLASSES.WIN_CELEBRATION);
 
-        // Mark winning cells
-        result.combo.forEach(index => {
-            const button = this.buttons[index];
-            button.classList.add('winner', result.winner);
-        });
-
-        // Show win line
-        this.showWinLine(result.combo);
-
-        // Update instructions
-        this.instructions.innerHTML = `<span class='win-text ${result.winner}'>${result.winner} wins!</span>`;
-
-        // Disable buttons
+        this.markWinningCells(result);
+        this.showWinLine(result.winningLine);
+        this.updateWinInstructions(result.winner);
         this.disablePlayButtons(true);
-
-        // Trigger confetti
         this.celebrateWin(result.winner);
+    }
+
+    markWinningCells(result) {
+        result.winningLine.forEach(index => {
+            const button = this.buttons[index];
+            button.classList.add(GAME_CONFIG.UI.CLASSES.WINNER, result.winner);
+        });
+    }
+
+    updateWinInstructions(winner) {
+        this.instructions.innerHTML = `<span class='win-text ${winner}'>${winner} wins!</span>`;
     }
 
     handleTie() {
         this.gameEngine.playingGame = false;
-        this.gridElement.classList.add('tie');
+        this.gridElement.classList.add(GAME_CONFIG.UI.CLASSES.TIE);
 
         setTimeout(() => {
-            this.gridElement.classList.remove('tie');
-            this.gridElement.classList.add('tie-game');
+            this.gridElement.classList.remove(GAME_CONFIG.UI.CLASSES.TIE);
+            this.gridElement.classList.add(GAME_CONFIG.UI.CLASSES.TIE_GAME);
             this.triggerTieConfetti();
-        }, 500);
+        }, GAME_CONFIG.UI.ANIMATION.TIE_ANIMATION_DELAY);
 
         this.instructions.innerHTML = '<span class="tie-text">It\'s a tie!</span>';
         this.disablePlayButtons(true);
@@ -199,109 +222,99 @@ export class UIController {
         const lineClasses = [
             'row-0', 'row-1', 'row-2',
             'col-0', 'col-1', 'col-2',
-            'diagonal-1', 'diagonal-2'
+            'diag-0', 'diag-1'
         ];
 
-        let lineClass = '';
-        if (combo[0] === combo[1] - 1 && combo[1] === combo[2] - 1) {
-            // Row
-            lineClass = `row-${Math.floor(combo[0] / 3)}`;
-        } else if (combo[0] === combo[1] - 3 && combo[1] === combo[2] - 3) {
-            // Column
-            lineClass = `col-${combo[0] % 3}`;
-        } else if (combo[0] === 0 && combo[2] === 8) {
-            // Main diagonal
-            lineClass = 'diagonal-1';
-        } else {
-            // Anti-diagonal
-            lineClass = 'diagonal-2';
+        const winLineClass = this.getWinLineClass(combo);
+        if (winLineClass) {
+            this.winLine.className = winLineClass;
+            // Make win line visible
+            this.winLine.style.display = 'block';
+        }
+    }
+
+    getWinLineClass(winningCells) {
+        const [a, b, c] = winningCells;
+
+        // Check for horizontal win (same row)
+        const rowA = Math.floor(a / 3);
+        const rowB = Math.floor(b / 3);
+        if (rowA === rowB) {
+            return `win-line row-${rowA}`;
         }
 
-        setTimeout(() => {
-            this.winLine.className = lineClass;
-            this.winLine.style.display = 'block';
-        }, 200);
+        // Check for vertical win (same column)
+        const colA = a % 3;
+        const colB = b % 3;
+        if (colA === colB) {
+            return `win-line col-${colA}`;
+        }
+
+        // Check for diagonal wins
+        if (winningCells.includes(0) && winningCells.includes(4) && winningCells.includes(8)) {
+            return 'win-line diag-0';
+        }
+
+        if (winningCells.includes(2) && winningCells.includes(4) && winningCells.includes(6)) {
+            return 'win-line diag-1';
+        }
+
+        return '';
     }
 
     celebrateWin(winner) {
-        const colors = winner === 'X' ? ['#ff0000'] : ['#0000ff'];
-        const isMobile = window.innerWidth <= 768;
+        const colors = winner === GAME_CONFIG.PLAYERS.X ? ['#FF0000', '#FF5555'] : ['#0000FF', '#5555FF'];
 
-        const config = {
-            particleCount: isMobile ? 100 : 400,
-            spread: isMobile ? 200 : 200,
-            startVelocity: isMobile ? 30 : 60,
-            gravity: 0.8,
-            scalar: isMobile ? 0.7 : 1,
-            disableForReducedMotion: true,
-            colors: colors
-        };
+        const duration = GAME_CONFIG.UI.ANIMATION.WIN_CELEBRATION_DURATION;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-        try {
-            if (isMobile) {
-                confetti({
-                    ...config,
-                    origin: { x: 0.5, y: 0.6 }
-                });
-            } else {
-                let burstCount = 0;
-                const maxBursts = 2;
-                const burstInterval = 300;
+        const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
-                const fireBurst = () => {
-                    if (burstCount < maxBursts) {
-                        confetti({
-                            ...config,
-                            angle: 60,
-                            origin: { x: 0, y: 0.7 }
-                        });
+        const interval = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
 
-                        confetti({
-                            ...config,
-                            angle: 120,
-                            origin: { x: 1, y: 0.7 }
-                        });
-
-                        burstCount++;
-                        if (burstCount < maxBursts) {
-                            setTimeout(fireBurst, burstInterval);
-                        }
-                    }
-                };
-
-                fireBurst();
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
             }
-        } catch (error) {
-            console.error('Confetti error:', error);
-        }
+
+            const particleCount = 50 * (timeLeft / duration);
+
+            confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: colors
+            });
+            confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: colors
+            });
+        }, 250);
     }
 
     triggerTieConfetti() {
-        try {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#ffcc00', '#ffffff', '#666666'],
-                gravity: 1.2
-            });
-        } catch (error) {
-            console.error('Confetti error:', error);
-        }
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        const colors = ['#FF0000', '#0000FF', '#00FF00', '#FFFF00'];
+
+        confetti({
+            ...defaults,
+            particleCount: 100,
+            origin: { x: 0.5, y: 0.5 },
+            colors: colors
+        });
     }
 
     updateInstructions() {
         const gameState = this.gameEngine.getGameState();
-        if (!gameState.playingGame) return;
+        const currentPlayer = gameState.currentPlayer;
 
-        if (gameState.isVsComputer) {
-            if (gameState.isAIThinking) {
-                this.instructions.innerHTML = "<span class='O'>Computer thinking...</span>";
-            } else {
-                this.instructions.innerHTML = `<span class='${gameState.currentPlayer}'>${gameState.currentPlayer === 'X' ? 'Your' : 'Computer\'s'} turn</span>`;
-            }
+        if (gameState.isAIThinking) {
+            this.instructions.innerHTML = 'Computer is thinking...';
         } else {
-            this.instructions.innerHTML = `<span class='${gameState.currentPlayer}'>${gameState.currentPlayer}</span>'s turn`;
+            this.instructions.innerHTML = `<span class="${currentPlayer}">${currentPlayer}</span>'s turn`;
         }
     }
 
@@ -312,115 +325,112 @@ export class UIController {
 
     resetUI() {
         this.buttons.forEach(button => {
-            button.innerHTML = '';
-            button.disabled = false;
-            button.style.pointerEvents = 'auto';
-            button.style.opacity = '1';
-            button.style.cursor = 'pointer';
-            button.classList.remove('X', 'O', 'winner');
             button.removeAttribute('data-played');
+            button.style.pointerEvents = '';
+            button.innerHTML = '';
+            button.className = 'grid-button';
+            button.disabled = false;
         });
 
-        this.winLine.style.display = 'none';
+        this.gridElement.classList.remove(
+            GAME_CONFIG.UI.CLASSES.WIN_CELEBRATION,
+            GAME_CONFIG.UI.CLASSES.TIE,
+            GAME_CONFIG.UI.CLASSES.TIE_GAME
+        );
+
         this.winLine.className = '';
-        this.gridElement.classList.remove('tie', 'tie-game', 'win-celebration');
-        this.instructions.innerHTML = "<span class='X'>X</span> starts the game";
-    }
-
-    handleModeSwitch() {
-        if (this.gameEngine.isAIThinking) return;
-
-        const newMode = this.gameEngine.gameMode === 'pvp' ? 'pvc' : 'pvp';
-        this.gameEngine.setGameMode(newMode);
-        const gameState = this.gameEngine.getGameState();
-
-        this.modeSwitch.textContent = gameState.isVsComputer ? 'vs Human' : 'vs Computer';
-        this.modeSwitch.classList.toggle('vs-human', gameState.isVsComputer);
-        this.difficultyContainer.classList.toggle('visible', gameState.isVsComputer);
-        this.gameModeText.innerHTML = `Playing against: <span>${gameState.isVsComputer ? 'Computer' : 'Another Player'}</span>`;
-        this.gameModeText.classList.toggle('vs-computer', gameState.isVsComputer);
-
-        // Always reset when switching modes and ensure X starts
-        this.gameEngine.reset();
-        this.resetUI();
-
-        // Update instructions to show it's player's turn (X)
+        this.winLine.style.display = 'none';
         this.updateInstructions();
     }
 
+    handleModeSwitch() {
+        const newMode = this.gameEngine.gameMode === GAME_CONFIG.GAME_MODES.PVP
+            ? GAME_CONFIG.GAME_MODES.PVC
+            : GAME_CONFIG.GAME_MODES.PVP;
+
+        this.gameEngine.setGameMode(newMode);
+        this.updateGameModeUI(newMode);
+        this.resetUI();
+    }
+
+    updateGameModeUI(mode) {
+        const isPVC = mode === GAME_CONFIG.GAME_MODES.PVC;
+
+        // Update button text
+        this.modeSwitch.textContent = isPVC ? 'vs Player' : 'vs Computer';
+
+        // Update game mode text
+        this.gameModeText.innerHTML = `Playing against: <span>${isPVC ? 'Computer' : 'Another Player'}</span>`;
+
+        // Show/hide difficulty selector
+        if (isPVC) {
+            this.difficultyContainer.style.display = 'block';
+            this.difficultyContainer.classList.add('visible');
+        } else {
+            this.difficultyContainer.style.display = 'none';
+            this.difficultyContainer.classList.remove('visible');
+        }
+
+        // Update UI classes
+        this.modeSwitch.classList.toggle('vs-human', isPVC);
+        this.gameModeText.classList.toggle('vs-computer', isPVC);
+    }
+
     handleDifficultyChange() {
-        if (this.gameEngine.isAIThinking) return;
-        this.gameEngine.aiPlayer = new AIPlayer(this.difficultySelect.value);
+        if (!this.gameEngine.aiPlayer) {
+            console.error('AI player not initialized');
+            return;
+        }
+
+        this.gameEngine.aiPlayer.setDifficulty(this.difficultySelect.value);
         this.handleReset();
     }
 
     disableAllButtons(disable) {
-        this.disablePlayButtons(disable);
-        this.modeSwitch.disabled = disable;
-        this.difficultySelect.disabled = disable;
-        this.resetButton.disabled = disable;
-
-        const opacity = disable ? '0.7' : '1';
-        this.modeSwitch.style.opacity = opacity;
-        this.difficultySelect.style.opacity = opacity;
-        this.resetButton.style.opacity = opacity;
-    }
-
-    disablePlayButtons(disable) {
         this.buttons.forEach(button => {
-            if (button.getAttribute('data-played') === 'true') {
-                button.disabled = true;
-                button.style.pointerEvents = 'none';
-            } else {
+            if (button.getAttribute('data-played') !== 'true') {
                 button.disabled = disable;
-                button.style.pointerEvents = disable ? 'none' : 'auto';
-                button.style.cursor = disable ? 'not-allowed' : 'pointer';
             }
         });
     }
 
-    // Touch event handlers
+    disablePlayButtons(disable) {
+        this.buttons.forEach(button => {
+            if (button.getAttribute('data-played') !== 'true') {
+                button.style.pointerEvents = disable ? 'none' : '';
+                button.disabled = disable;
+            }
+        });
+    }
+
     handleTouchStart(event) {
-        const gameState = this.gameEngine.getGameState();
-        if (!gameState.playingGame || gameState.isAIThinking) return;
-
-        const button = event.target;
-        if (button.getAttribute('data-played') === 'true') {
-            event.preventDefault();
-            return;
-        }
-
-        event.preventDefault();
-        this.handlePlayerClick(event);
+        event.target.classList.add('touched');
     }
 
     handleResetTouch(event) {
         event.preventDefault();
-        this.resetButton.classList.add('active');
+        this.resetButton.classList.add('touched');
     }
 
     handleResetTouchEnd(event) {
-        event.preventDefault();
-        this.resetButton.classList.remove('active');
+        this.resetButton.classList.remove('touched');
         this.handleReset();
     }
 
     handleModeSwitchTouch(event) {
-        if (this.gameEngine.isAIThinking) return;
         event.preventDefault();
-        this.modeSwitch.classList.add('active');
+        this.modeSwitch.classList.add('touched');
     }
 
     handleModeSwitchTouchEnd(event) {
-        if (this.gameEngine.isAIThinking) return;
-        event.preventDefault();
-        this.modeSwitch.classList.remove('active');
+        this.modeSwitch.classList.remove('touched');
         this.handleModeSwitch();
     }
 
     preventZoom(event) {
-        if (event.cancelable) {
-            event.preventDefault();
+        const target = event.target;
+        if (target.classList.contains('touched')) {
+            target.classList.remove('touched');
         }
     }
 } 

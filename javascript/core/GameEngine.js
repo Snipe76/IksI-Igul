@@ -1,8 +1,14 @@
+import { GAME_CONFIG } from './config.js';
+
 export class GameEngine {
     constructor() {
-        this.board = Array(9).fill(null);
-        this.currentPlayer = 'X';
-        this.gameMode = 'pvp'; // 'pvp' or 'pvc'
+        this.initializeGameState();
+    }
+
+    initializeGameState() {
+        this.board = Array(GAME_CONFIG.BOARD.TOTAL_CELLS).fill(null);
+        this.currentPlayer = GAME_CONFIG.PLAYERS.X;
+        this.gameMode = GAME_CONFIG.GAME_MODES.PVP;
         this.aiPlayer = null;
         this.isGameOver = false;
         this.winner = null;
@@ -13,54 +19,63 @@ export class GameEngine {
     }
 
     reset() {
-        this.board = Array(9).fill(null);
-        this.currentPlayer = 'X';
+        // Keep existing AI player when resetting
+        const currentAiPlayer = this.aiPlayer;
+        const currentGameMode = this.gameMode;
+
+        this.board = Array(GAME_CONFIG.BOARD.TOTAL_CELLS).fill(null);
+        this.currentPlayer = GAME_CONFIG.PLAYERS.X;
+        this.gameMode = currentGameMode;
+        this.aiPlayer = currentAiPlayer;
         this.isGameOver = false;
         this.winner = null;
         this.winningLine = null;
         this.moveHistory = [];
         this.playingGame = true;
         this.isAIThinking = false;
-
-        // If in computer mode and it's O's turn, trigger AI move
-        if (this.gameMode === 'pvc' && this.currentPlayer === 'O') {
-            this.currentPlayer = 'X';  // Ensure player starts as X
-        }
     }
 
     makeMove(position) {
-        // Validate move
-        if (!this.playingGame || this.isGameOver || position < 0 || position > 8 || this.board[position] !== null) {
+        if (!this.isValidMove(position)) {
             return false;
         }
 
-        // Make the move
         this.board[position] = this.currentPlayer;
         this.moveHistory.push(position);
 
-        // Check for game end conditions
         const gameStatus = this.checkGameStatus();
         if (gameStatus.isOver) {
-            this.isGameOver = true;
-            this.winner = gameStatus.winner;
-            this.winningLine = gameStatus.winningLine;
+            this.handleGameOver(gameStatus);
             return true;
         }
 
-        // Switch players
-        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+        this.switchPlayer();
         return true;
     }
 
-    checkGameStatus() {
-        const winPatterns = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-            [0, 4, 8], [2, 4, 6]             // Diagonals
-        ];
+    isValidMove(position) {
+        return this.playingGame &&
+            !this.isGameOver &&
+            position >= 0 &&
+            position < GAME_CONFIG.BOARD.TOTAL_CELLS &&
+            this.board[position] === null;
+    }
 
+    handleGameOver(gameStatus) {
+        this.isGameOver = true;
+        this.winner = gameStatus.winner;
+        this.winningLine = gameStatus.winningLine;
+    }
+
+    switchPlayer() {
+        this.currentPlayer = this.currentPlayer === GAME_CONFIG.PLAYERS.X
+            ? GAME_CONFIG.PLAYERS.O
+            : GAME_CONFIG.PLAYERS.X;
+    }
+
+    checkGameStatus() {
         // Check for win
-        for (const pattern of winPatterns) {
+        for (const pattern of GAME_CONFIG.BOARD.WIN_PATTERNS) {
             const [a, b, c] = pattern;
             if (this.board[a] &&
                 this.board[a] === this.board[b] &&
@@ -101,11 +116,11 @@ export class GameEngine {
     }
 
     setGameMode(mode) {
-        if (mode !== 'pvp' && mode !== 'pvc') {
+        if (!Object.values(GAME_CONFIG.GAME_MODES).includes(mode)) {
             throw new Error('Invalid game mode');
         }
         this.gameMode = mode;
-        this.reset();  // Reset the game when mode changes
+        this.reset();
     }
 
     undoLastMove() {
@@ -115,7 +130,7 @@ export class GameEngine {
 
         const lastPosition = this.moveHistory.pop();
         this.board[lastPosition] = null;
-        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+        this.switchPlayer();
         this.isGameOver = false;
         this.winner = null;
         this.winningLine = null;
@@ -133,7 +148,7 @@ export class GameEngine {
             gameMode: this.gameMode,
             playingGame: this.playingGame,
             isAIThinking: this.isAIThinking,
-            isVsComputer: this.gameMode === 'pvc'
+            isVsComputer: this.gameMode === GAME_CONFIG.GAME_MODES.PVC
         };
     }
 } 

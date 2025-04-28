@@ -72,9 +72,6 @@
     display: none;
     z-index: 3;
     pointer-events: none;
-    transition: transform 0.3s ease;
-    top: 0;
-    left: 0;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
@@ -124,14 +121,14 @@
     transform: translateX(-50%);
 }
 
-#win-line.diagonal-1 {
+#win-line.diag-0 {
     width: 141.42%;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
 }
 
-#win-line.diagonal-2 {
+#win-line.diag-1 {
     width: 141.42%;
     left: 50%;
     top: 50%;
